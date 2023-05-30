@@ -11,14 +11,56 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+                @if ((Auth::user()->privilege->privilege_grade) == 2)
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('attendance') }}" :active="request()->routeIs('attendance')">
+                            {{ __('General') }}
+                        </x-nav-link>
+                    </div>
+                @elseif((Auth::user()->privilege->privilege_grade) == 1)
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('attendance') }}" :active="request()->routeIs('attendance')">
+                            {{ __('Attendance') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('retirement') }}" :active="request()->routeIs('retirement')">
+                            {{ __('Retirement') }}
+                        </x-nav-link>
+                    </div>
+                @elseif((Auth::user()->privilege->privilege_grade) == 3)
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('attendance') }}" :active="request()->routeIs('attendance')">
+                            {{ __('Attendance') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('retirement') }}" :active="request()->routeIs('retirement')">
+                            {{ __('Retirement') }}
+                        </x-nav-link>
+                    </div>
+                @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @if((Auth::user()->privilege->privilege_grade) == 1)
+                    <x-nav-link href="{{ route('dashboard') }}">
+                        {{ __('Student') }}
+                    </x-nav-link>
+                @elseif((Auth::user()->privilege->privilege_grade) == 3)
+                    <x-nav-link href="{{ route('dashboard') }}">
+                        {{ __('Preceptor') }}
+                    </x-nav-link>
+                @elseif((Auth::user()->privilege->privilege_grade) == 2)
+                    <x-nav-link href="{{ route('dashboard') }}">
+                        {{ __('Scan station') }}
+                    </x-nav-link>
+                @endif
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">

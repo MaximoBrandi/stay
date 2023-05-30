@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AttendanceModelController;
+use App\Http\Controllers\RetirementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::controller(AttendanceModelController::class)->group(function () {
+    Route::get('/attendance', 'store');
+});
+
+Route::controller(RetirementController::class)->group(function () {
+    Route::get('/retirement', 'store');
+});
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -25,4 +36,12 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/attendance', function () {
+        return view('attendance');
+    })->name('attendance');
+
+    Route::get('/retirement', function () {
+        return view('retirement');
+    })->name('retirement');
 });

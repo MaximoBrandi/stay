@@ -7,7 +7,7 @@ use App\Models\TokenModel;
 
 class TokenModelController extends Controller
 {
-        /**
+    /**
      * Almacenar una nueva asistencia en la base de datos.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -15,11 +15,7 @@ class TokenModelController extends Controller
      */
     public function generate(Request $request)
     {
-        // Validar los datos del formulario
-        $validatedData = $request->validate([
-            'student_id' => 'required',
-            // Agrega aquí las reglas de validación para los demás campos de la tabla
-        ]);
+        $student_id = Auth::user()->id;
 
         // Crear una nueva instancia de TokenModel y asignar los valores
         $token = new TokenModel;

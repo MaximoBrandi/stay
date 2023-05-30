@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('student_id');
             $table->string('token');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

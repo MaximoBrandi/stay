@@ -1,3 +1,7 @@
 <div>
-    {{-- Care about people's approval and you will be their prisoner. --}}
+    @if (Auth::user()->privilege->privilege_grade == 1)
+        <livewire:users-table />
+    @elseif (App\Models\AttendanceModel::find(8))
+        <livewire:datatable model="App\Models\AttendanceModel" name="all-users" />
+    @endif
 </div>

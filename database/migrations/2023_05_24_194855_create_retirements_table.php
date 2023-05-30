@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendance_models', function (Blueprint $table) {
+        Schema::create('retirements', function (Blueprint $table) {
             $table->id();
             $table->string('student_id');
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_models');
+        Schema::dropIfExists('retirements');
     }
 };
