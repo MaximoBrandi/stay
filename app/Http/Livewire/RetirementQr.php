@@ -32,7 +32,7 @@ class RetirementQr extends Component
         // Asigna aquí los demás campos de la tabla
 
         // Generar link del codigo qr
-        $this->qrlink = "http://localhost:8000/retirement?_token=".$token->token;
+        $this->qrlink = "http://localhost:8000/retirement/".$token->token;
         // Guardar la asistencia en la base de datos
         $token->save();
 

@@ -14,11 +14,18 @@
                     </div>
                 </div>
             @endif
-            <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
-                <div>
-                    <livewire:attendances />
+            @if (Auth::user()->privilege->privilege_grade == 3)
+                <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
+                    <div>
+                        <livewire:attendances />
+                    </div>
                 </div>
-            </div>
+                <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
+                    <div>
+                        <livewire:courses />
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

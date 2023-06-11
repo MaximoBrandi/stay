@@ -24,9 +24,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        static $password;
+
         return [
             'email_verified_at' => now(),
-            'password' => '12341234', // password
+            'password' => $password ?: $password = bcrypt('12341234'), // password
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),

@@ -17,12 +17,12 @@
                 <script type="text/javascript">
                     let scanner = new Instascan.Scanner({ video: document.getElementById('previewVideoCam') });
                     scanner.addListener('scan', function (content) {
-                        Livewire.emit('refreshComponent')
-
                         fetch(content)
                             .then(response => response.text())
                             .then(html => console.log(html))
                             .catch(error => console.log('Ocurrió un error:', error));
+
+                        location.reload()
                     });
                     Instascan.Camera.getCameras().then(function (cameras) {
                         if (cameras.length > 0) {
@@ -34,6 +34,10 @@
                         console.error(e);
                     });
                 </script>
+
+                <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
+                    <livewire:today-attendance />
+                </div>
             @endif
             @if (Auth::user()->privilege->privilege_grade == 1)
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">

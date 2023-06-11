@@ -20,11 +20,11 @@ Route::get('/', function () {
 });
 
 Route::controller(AttendanceModelController::class)->group(function () {
-    Route::get('/attendance', 'store');
+    Route::get('/attendance/{token}', 'store');
 });
 
 Route::controller(RetirementController::class)->group(function () {
-    Route::get('/retirement', 'store');
+    Route::get('/retirement/{token}', 'store');
 });
 
 

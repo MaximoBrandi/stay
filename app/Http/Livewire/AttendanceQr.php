@@ -15,6 +15,16 @@ class AttendanceQr extends Component
 
     public $alreadylogedin;
 
+    private function saveToken(){
+        $this->alreadylogedin = false;
+
+        $this->create();
+
+        if ($this->lasttoken) {
+            $this->lasttoken->delete();
+        }
+    }
+
     /**
      * Almacenar una nueva asistencia en la base de datos.
      *
@@ -32,7 +42,7 @@ class AttendanceQr extends Component
         // Asigna aquí los demás campos de la tabla
 
         // Generar link del codigo qr
-        $this->qrlink = "http://localhost:8000/attendance?_token=".$token->token;
+        $this->qrlink = "http://localhost:8000/attendance/".$token->token;
         // Guardar la asistencia en la base de datos
         $token->save();
 
@@ -43,26 +53,18 @@ class AttendanceQr extends Component
 
     public function generate()
     {
-        if (AttendanceModel::find(1)) {
-            if ((AttendanceModel::where('student_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->first())->created_at->day !== (int)date('d')) {
-                $this->alreadylogedin = false;
+        $attendanceModel = AttendanceModel::where('student_id', '=', Auth::user()->id);
 
-                $this->create();
+        if ($attendanceModel->exists()) {
 
-                if ($this->lasttoken) {
-                    $this->lasttoken->delete();
-                }
+            if (($attendanceModel->first())->created_at->day !== (int)date('d')) {
+                $this->saveToken();
             }else{
                 $this->alreadylogedin = true;
             }
+
         }else{
-            $this->alreadylogedin = false;
-
-            $this->create();
-
-            if ($this->lasttoken) {
-                $this->lasttoken->delete();
-            }
+            $this->saveToken();
         }
     }
 
