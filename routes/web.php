@@ -27,7 +27,6 @@ Route::controller(RetirementController::class)->group(function () {
     Route::get('/retirement/{token}', 'store');
 });
 
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -44,4 +43,8 @@ Route::middleware([
     Route::get('/retirement', function () {
         return view('retirement');
     })->name('retirement');
+
+    Route::get('/database', function () {
+        return view('database');
+    })->name('database');
 });

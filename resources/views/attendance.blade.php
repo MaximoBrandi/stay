@@ -40,7 +40,7 @@
                 </div>
             @endif
             @if (Auth::user()->privilege->privilege_grade == 1)
-                <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-white dark:bg-white mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex mt-8 mb-8 justify-center">
                         <livewire:attendance-qr />
                     </div>

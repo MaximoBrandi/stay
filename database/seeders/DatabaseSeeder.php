@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $student_id = 0;
         $course_id = 1;
         $preceptor_id = 0;
+        $accountant_id = 0;
         $teams = array();
 
         $preceptors = User::factory(3)->create();
@@ -67,6 +68,21 @@ class DatabaseSeeder extends Seeder
             $privilege = new Privileges;
             $privilege->user_id = $student->id;
             $privilege->privilege_grade = 1;
+            $privilege->save();
+        }
+
+        $accountants = User::factory(3)->create();
+
+        foreach($accountants as $accountant) {
+            $accountant_id++;
+            $accountant->name = 'accountant '.$accountant_id;
+            $accountant->email = 'accountant-'.$accountant_id.'@gmail.com';
+            $accountant->current_team_id = $course_id;
+            $accountant->save();
+
+            $privilege = new Privileges;
+            $privilege->user_id = $accountant->id;
+            $privilege->privilege_grade = 4;
             $privilege->save();
         }
     }

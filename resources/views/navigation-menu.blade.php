@@ -44,20 +44,37 @@
                             {{ __('Retirement') }}
                         </x-nav-link>
                     </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('database') }}" :active="request()->routeIs('database')">
+                            {{ __('Database') }}
+                        </x-nav-link>
+                    </div>
+                @elseif((Auth::user()->privilege->privilege_grade) == 4)
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('database') }}" :active="request()->routeIs('database')">
+                            {{ __('Database') }}
+                        </x-nav-link>
+                    </div>
+                @elseif((Auth::user()->privilege->privilege_grade) == 3)
                 @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 @if((Auth::user()->privilege->privilege_grade) == 1)
-                    <x-nav-link href="{{ route('dashboard') }}">
+                    <x-nav-link href="javascript:void(0)">
                         {{ __('Student') }}
                     </x-nav-link>
                 @elseif((Auth::user()->privilege->privilege_grade) == 3)
-                    <x-nav-link href="{{ route('dashboard') }}">
+                    <x-nav-link href="javascript:void(0)">
                         {{ __('Preceptor') }}
                     </x-nav-link>
                 @elseif((Auth::user()->privilege->privilege_grade) == 2)
-                    <x-nav-link href="{{ route('dashboard') }}">
+                    <x-nav-link href="javascript:void(0)">
                         {{ __('Scan station') }}
                     </x-nav-link>
                 @endif
@@ -69,21 +86,21 @@
                                 <span class="inline-flex rounded-md">
                                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                                         {{ Auth::user()->currentTeam->name }}
-
+{{--
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                        </svg> --}}
                                     </button>
                                 </span>
                             </x-slot>
 
                             <x-slot name="content">
                                 <div class="w-60">
-                                    <!-- Team Management -->
+                                     <!-- Team Management -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                        {{ __('Manage Team') }}
+                                        {{ __('Courses') }}
                                     </div>
-
+{{--
                                     <!-- Team Settings -->
                                     <x-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                                         {{ __('Team Settings') }}
@@ -93,7 +110,7 @@
                                         <x-dropdown-link href="{{ route('teams.create') }}">
                                             {{ __('Create New Team') }}
                                         </x-dropdown-link>
-                                    @endcan
+                                    @endcan --}}
 
                                     <!-- Team Switcher -->
                                     @if (Auth::user()->allTeams()->count() > 1)
@@ -144,11 +161,11 @@
                                 {{ __('Profile') }}
                             </x-dropdown-link>
 
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                            {{-- @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
                                     {{ __('API Tokens') }}
                                 </x-dropdown-link>
-                            @endif
+                            @endif --}}
 
                             <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
