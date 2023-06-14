@@ -15,6 +15,7 @@ class AbsentDay extends LivewireDatatable
 {
     public $model = User::class;
     public $curso;
+    public $counting = 0;
     public $exportable = true;
 
     public function builder()
@@ -23,7 +24,9 @@ class AbsentDay extends LivewireDatatable
             $this->curso = Auth::user()->current_team_id;
         }
 
-        return User::query()->whereIn('id', (new DateController)->Libres($this->curso));
+        $this->counting = 0;
+
+        return User::query()->whereIn('id', (new DateController)->AbsentDay($this->curso)[0]);
     }
 
     public function columns()
@@ -33,7 +36,15 @@ class AbsentDay extends LivewireDatatable
 
         Column::name('email')->label('Email'),
 
-        Column::name('id')->label('Student ID')
+        Column::name('id')->label('Student ID'),
+
+        Column::callback(['id'], function ($id) {
+            $pistacho = (new DateController)->AbsentDay($this->curso)[1][$this->counting];
+
+            $this->counting++;
+
+            return $pistacho;
+        })->label('Absents'),
         ];
     }
 }

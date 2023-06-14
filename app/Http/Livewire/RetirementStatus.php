@@ -9,26 +9,44 @@ use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
+use App\Http\Controllers\DateController;
 
 class RetirementStatus extends LivewireDatatable
 {
     public $model = User::class;
-
+    public $curso;
+    public $counting = 0;
     public $exportable = true;
 
     public function builder()
     {
-        return retirement::query()->whereDate('retirements.created_at', \Illuminate\Support\Carbon::today())->where('current_team_id', '=', Auth::user()->currentTeam->id)->leftJoin('users', 'users.id', 'retirements.student_id')->where('users.id', '>', '3');
+        if (Auth::user()->privilege->privilege_grade == 3) {
+            $this->curso = Auth::user()->current_team_id;
+        }
+
+        $this->counting = 0;
+
+        $array = array_keys((new DateController)->AverageRetirement($this->curso));
+
+        return User::query()->whereIn('id', $array);
     }
 
     public function columns()
     {
         return [
-        Column::name('users.name')->label('Name'),
+        Column::name('name')->label('Name'),
 
-        Column::name('users.email')->label('Email'),
+        Column::name('email')->label('Email'),
 
-        Column::name('users.id')->label('Student ID')
+        Column::name('id')->label('Student ID'),
+
+        Column::callback(['id'], function ($id) {
+            $array = array_values((new DateController)->AverageRetirement($this->curso))[$this->counting];
+
+            $this->counting++;
+
+            return $array;
+        })->label('Retirements'),
         ];
     }
 }

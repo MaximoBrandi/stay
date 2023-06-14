@@ -13,6 +13,7 @@
     <div class="py-12">
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if (Auth::user()->privilege->privilege_id > 2)
             <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="hystmodal" id="disengageModal2" aria-hidden="true">
                     <div class="hystmodal__wrap">
@@ -80,6 +81,7 @@
                     <livewire:course-resume-milestones :course=" Auth::user()->currentTeam->id " />
                 </div>
             </div>
+            @endif
             @if (Auth::user()->privilege->privilege_grade == 1)
                 <div class="bg-white dark:bg-gray-200 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex mt-8 mb-8 justify-center">

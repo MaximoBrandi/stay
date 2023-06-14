@@ -43,7 +43,7 @@ class RetirementQr extends Component
 
     public function generate()
     {
-        if (retirement::find(1)) {
+        if (retirement::where('student_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->exists()) {
             if ((retirement::where('student_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->first())->created_at->day !== (int)date('d')) {
                 $this->alreadylogedin = false;
 
