@@ -14,5 +14,5 @@
     <div class="flex mt-4 -mb-8 justify-center">
         <h1>Course 2 absent students</h1>
     </div>
-    <livewire:disengage-students />
+    <livewire:absent-average :course="$course"/>
 </div>

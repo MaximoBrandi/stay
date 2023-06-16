@@ -6,29 +6,42 @@ use Carbon\Carbon;
 use App\Models\AttendanceModel;
 use App\Models\retirement;
 use App\Models\User;
+use App\Models\Team;
 
 class DateController extends Controller
 {
-    private $inicioClases;
-    private $tardeClases;
-    private $ausenteClases;
+    private readonly int $course;
+    private readonly Carbon $inicioClases;
+    private readonly Carbon $tardeClases;
+    private readonly Carbon $ausenteClases;
 
-    private $inicioCiclo;
-    private $finCiclo;
+    private readonly Carbon $aperturaClases;
 
-    private $inicioReceso;
-    private $finReceso;
+    private readonly Carbon $finClases;
 
-    private $fechaActual;
+    private readonly Carbon $inicioCiclo;
+    private readonly Carbon $finCiclo;
 
-    private $feriados;
+    private readonly Carbon $inicioReceso;
+    private readonly Carbon $finReceso;
 
-    private $clases;
+    private readonly Carbon $fechaActual;
+
+    private readonly array $feriados;
+
+    private readonly int $clases;
     private $prom;
 
-    private function Initialize(){
-        $this->HorarioActual();
+    public function __construct($course)
+    {
+        $this->course = $course;
 
+        $this->HorarioActual(Team::find($this->course)->pluck('shift')->first());
+
+        $this->Initialize();
+    }
+
+    private function Initialize(){
         $this->inicioCiclo = Carbon::create(2023, 2, 27, 0);
         $this->finCiclo = Carbon::create(2023, 12, 22, 0);
 
@@ -71,35 +84,74 @@ class DateController extends Controller
         $this->clases = $clases;
     }
 
-    private function HorarioActual(){
-        if (Carbon::today()->englishDayOfWeek == 'Friday') {
-            $this->inicioClases = Carbon::createFromTime(18, 30, 0);
-            $this->tardeClases = Carbon::createFromTime(19, 00, 0);
-            $this->ausenteClases = Carbon::createFromTime(19, 15, 0);
-        } else {
-            $this->inicioClases = Carbon::createFromTime(18, 0, 0);
-            $this->tardeClases = Carbon::createFromTime(18, 30, 0);
-            $this->ausenteClases = Carbon::createFromTime(18, 45, 0);
+    private function HorarioActual($shift){
+        switch ($shift) {
+            case 'night':
+                if (Carbon::today()->englishDayOfWeek == 'Friday') {
+                    $this->aperturaClases = Carbon::createFromTime(17, 30, 0);
+                    $this->inicioClases = Carbon::createFromTime(18, 30, 0);
+                    $this->tardeClases = Carbon::createFromTime(19, 00, 0);
+                    $this->ausenteClases = Carbon::createFromTime(19, 15, 0);
+                    $this->finClases = Carbon::createFromTime(22, 20, 0);
+                } else {
+                    $this->aperturaClases = Carbon::createFromTime(17, 00, 0);
+                    $this->inicioClases = Carbon::createFromTime(18, 0, 0);
+                    $this->tardeClases = Carbon::createFromTime(18, 30, 0);
+                    $this->ausenteClases = Carbon::createFromTime(18, 45, 0);
+                    $this->finClases = Carbon::createFromTime(22, 50, 0);
+                }
+                break;
+            case 'afternoon':
+                if (Carbon::today()->englishDayOfWeek == 'Friday') {
+                    $this->aperturaClases = Carbon::createFromTime(17, 30, 0);
+                    $this->inicioClases = Carbon::createFromTime(18, 30, 0);
+                    $this->tardeClases = Carbon::createFromTime(19, 00, 0);
+                    $this->ausenteClases = Carbon::createFromTime(19, 15, 0);
+                    $this->finClases = Carbon::createFromTime(22, 20, 0);
+                } else {
+                    $this->aperturaClases = Carbon::createFromTime(17, 00, 0);
+                    $this->inicioClases = Carbon::createFromTime(18, 0, 0);
+                    $this->tardeClases = Carbon::createFromTime(18, 30, 0);
+                    $this->ausenteClases = Carbon::createFromTime(18, 45, 0);
+                    $this->finClases = Carbon::createFromTime(22, 50, 0);
+                }
+                break;
+            case 'morning':
+                if (Carbon::today()->englishDayOfWeek == 'Monday') {
+                    $this->aperturaClases = Carbon::createFromTime(7, 0, 0);
+                    $this->inicioClases = Carbon::createFromTime(7, 30, 0);
+                    $this->tardeClases = Carbon::createFromTime(7, 45, 0);
+                    $this->ausenteClases = Carbon::createFromTime(8, 0, 0);
+                    $this->finClases = Carbon::createFromTime(12, 20, 0);
+                } else {
+                    $this->aperturaClases = Carbon::createFromTime(17, 00, 0);
+                    $this->inicioClases = Carbon::createFromTime(18, 0, 0);
+                    $this->tardeClases = Carbon::createFromTime(18, 30, 0);
+                    $this->ausenteClases = Carbon::createFromTime(18, 45, 0);
+                    $this->finClases = Carbon::createFromTime(22, 50, 0);
+                }
+                break;
+
+            default:
+                # code...
+                break;
         }
     }
 
-    public function Tardes($id){
-        $this->Initialize();
-
+    public function Tardes($id) {
         $tardes = 0;
 
-        $retirementsModelsCrud = retirement::where('student_id', '=', $id)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentRetirements = array();
+        $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
 
-        foreach ($retirementsModelsCrud as $key => $value) {
-            array_push($studentRetirements, $value[0]);
-        }
+        $attendances = AttendanceModel::where('student_id', $id)
+            ->whereNotIn('created_at', $retirements)
+            ->pluck('created_at')
+            ->toArray();
 
-        $attendancesModelsCrud = AttendanceModel::query()->where('student_id', '=', $id)->whereNotIn('created_at', $studentRetirements)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentAttendances = array();
+        foreach ($attendances as $attendance) {
+            $attendanceTime = Carbon::createFromFormat('Y-m-d H:i:s', $attendance);
 
-        foreach ($attendancesModelsCrud as $key => $value) {
-            if (Carbon::createFromTime($value[0]->hour, $value[0]->minute, $value[0]->second)->betweenIncluded($this->tardeClases, $this->ausenteClases)) {
+            if ($attendanceTime->betweenIncluded($this->tardeClases, $this->ausenteClases)) {
                 $tardes++;
             }
         }
@@ -107,87 +159,67 @@ class DateController extends Controller
         return $tardes;
     }
 
-    public function Libres($curso){
-        $this->Initialize();
-
-        $studentRetirements = array();
-
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
-            if ($this->Ausentes($value[0]) >= 30) {
-                array_push($studentRetirements, $value[0]);
-            }
-        }
+    public function Libres($curso) {
+        $studentRetirements = User::where('id', '>', 3)
+            ->where('current_team_id', $curso)
+            ->get()
+            ->filter(function ($user) {
+                return $this->Ausentes($user->id) >= 30;
+            })
+            ->pluck('id')
+            ->toArray();
 
         return $studentRetirements;
     }
 
-    public function AbsentDay($curso){
-        $this->Initialize();
-
-        $absentDay = array();
-
+    public function AbsentDay($curso) {
+        $absentDay = [];
         $diaAusente = $this->DiaConMasAusentes($curso);
 
-        $mostAbsentKey = array();
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
 
-        $mostAbsentValue = array();
-
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
+        foreach ($userIds as $userId) {
             $contador = Carbon::create(2023, 2, 27, 0);
             $contadorAusentes = 0;
 
             while ($this->fechaActual >= $contador) {
-
                 if ($contador->dayName == $diaAusente && !in_array($contador, $this->feriados)) {
-                    if (!AttendanceModel::whereDate('created_at', $contador)->where('student_id', '=', $value[0])->exists() || retirement::whereDate('created_at', $contador)->where('student_id', '=', $value[0])->exists()) {
+                    if (!AttendanceModel::whereDate('created_at', $contador)->where('student_id', $userId)->exists() || retirement::whereDate('created_at', $contador)->where('student_id', $userId)->exists()) {
                         $contadorAusentes++;
                     }
                 }
 
                 $contador->addDay(); // Avanza al siguiente día
             }
-            array_push($absentDay, [
-                $value[0] => $contadorAusentes,
-            ]);
+
+            $absentDay[$userId] = $contadorAusentes;
         }
 
-        $this->prom = array_sum($absentDay)/count($absentDay);
+        $prom = array_sum($absentDay) / count($absentDay);
 
-        $absentDay = array_filter($absentDay, function($n){
+        $absentDay = array_filter($absentDay, function ($n) use ($prom) {
+            return $n >= $prom;
+        });
 
-             return $n >= $this->prom;
-         });
+        $mostAbsentKey = array_keys($absentDay);
+        $mostAbsentValue = array_values($absentDay);
 
-         $result = array();
-
-        foreach ($absentDay as $key => $value) {
-            array_push($mostAbsentKey, array_keys($value)[0]);
-            array_push($mostAbsentValue, array_values($value)[0]);
-        }
-
-        array_push($result, $mostAbsentKey);
-        array_push($result, $mostAbsentValue);
-
-        return $result;
+        return [$mostAbsentKey, $mostAbsentValue];
     }
 
-    public function DiaConMasAusentes($curso){
-        $this->Initialize();
-
-        $contador = $this->inicioCiclo;
-
-        $dias = array(
+    public function DiaConMasAusentes($curso) {
+        $contador = Carbon::create(2023, 2, 27, 0);
+        $dias = [
             'Monday' => 0,
             'Tuesday' => 0,
             'Wednesday' => 0,
             'Thursday' => 0,
             'Friday' => 0,
-        );
+        ];
 
         while ($this->fechaActual >= $contador) {
-
             if ($contador->isWeekday() && !in_array($contador, $this->feriados)) {
-                $dias[$contador->dayName] = $dias[$contador->dayName] + $this->AusentesHoy($curso, $contador);
+                $dias[$contador->dayName] += $this->AusentesHoy($curso, $contador);
             }
 
             $contador->addDay(); // Avanza al siguiente día
@@ -196,66 +228,114 @@ class DateController extends Controller
         return array_search(max($dias), $dias);
     }
 
-    public function AverageRetirement($curso){
-        $this->Initialize();
+    public function diaDeClases(){
+        if ($this->fechaActual->isWeekday() && !in_array($this->fechaActual, $this->feriados)) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
-        $averageRetirement = array();
+    public function horaDeClases(){
+        if (Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now())->betweenIncluded($this->aperturaClases, $this->finClases)) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
-            $contador = Carbon::create(2023, 2, 27, 0);
-            $contadorAusentes = 0;
+    public function estadoDelDia($id){
+        $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
 
-            $averageRetirement[$value[0]] = $this->Retiradas($value[0]);
+        $attendances = AttendanceModel::where('student_id', $id)->whereNotIn('created_at', $retirements)->pluck('created_at')->toArray();
+
+        foreach ($attendances as $attendance) {
+            $attendanceTime = Carbon::createFromFormat('Y-m-d H:i:s', $attendance);
+
+            if ($attendanceTime->betweenIncluded($this->tardeClases, $this->ausenteClases)) {
+                return 1;
+            }else
+            if ($attendanceTime->betweenIncluded($this->ausenteClases, $this->finClases)) {
+                return 2;
+            }else
+            if ($attendanceTime->betweenIncluded($this->aperturaClases, $this->inicioClases)) {
+                return 3;
+            }
+        }
+
+        return 4;
+    }
+
+    public function AverageRetirement($curso) {
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $averageRetirement = [];
+
+        foreach ($userIds as $userId) {
+            $averageRetirement[$userId] = $this->Retiradas($userId);
         }
 
         arsort($averageRetirement, SORT_NUMERIC);
+        $sortedKeys = array_keys($averageRetirement);
 
-        $newArray = array_keys($averageRetirement);
+        $selectedKeys = array_slice($sortedKeys, 0, 3);
+        $selectedKeys = array_merge($selectedKeys, array_slice($sortedKeys, -3));
 
-        $newnewArray = array();
-
-        array_push($newnewArray, $averageRetirement[$newArray[0]], $averageRetirement[$newArray[1]], $averageRetirement[$newArray[2]], $averageRetirement[$newArray[count($newArray)-1]], $averageRetirement[$newArray[count($newArray)-2]], $averageRetirement[$newArray[count($newArray)-3]]);
-
-        $averageRetirement = array();
-
-        foreach ($newnewArray as $key => $value) {
-            $averageRetirement[$newArray[$key]] = $value;
-        }
+        $averageRetirement = array_intersect_key($averageRetirement, array_flip($selectedKeys));
 
         return $averageRetirement;
     }
 
-    public function PromedioAusentesClases($curso){
-        $this->Initialize();
+    public function AverageAbsent($curso) {
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $averageAbsent = [];
 
+        foreach ($userIds as $userId) {
+            $averageAbsent[$userId] = $this->Ausentes($userId);
+        }
+
+        asort($averageAbsent);
+        $sortedKeys = array_keys($averageAbsent);
+
+        $selectedKeys = array_slice($sortedKeys, 0, 3);
+        $selectedKeys = array_merge($selectedKeys, array_slice($sortedKeys, -3));
+
+        $averageAbsent = array_intersect_key($averageAbsent, array_flip($selectedKeys));
+
+        return $averageAbsent;
+    }
+
+    public function PromedioAusentesClases($curso) {
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalAusentes = 0;
 
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
-            $totalAusentes = $totalAusentes + $this->Ausentes($value[0]);
+        foreach ($userIds as $userId) {
+            $totalAusentes += $this->Ausentes($userId);
         }
 
-        return number_format((float)($totalAusentes / $this->clases), 2, '.', '');
+        return number_format($totalAusentes / $this->clases, 2, '.', '');
     }
 
-    public function PromedioRetirosSemana($curso){
-        $this->Initialize();
-
+    public function PromedioRetirosSemana($curso) {
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalRetiros = 0;
 
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
-            $totalRetiros = $totalRetiros + $this->Retiradas($value[0]);
+        foreach ($userIds as $userId) {
+            $totalRetiros += $this->Retiradas($userId);
         }
 
-        return number_format((float)($totalRetiros / ( $this->clases / 5)) / $this->clases, 3, '.', '');
+        $clasesPorSemana = $this->clases / 5;
+        return number_format($totalRetiros / $clasesPorSemana / $this->clases, 3, '.', '');
     }
 
-    public function AusentesHoy($curso, $fecha){
-        $this->Initialize();
-
+    public function AusentesHoy($curso, $fecha) {
+        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalAusentesHoy = 0;
 
-        foreach (User::query()->where('id', '>', 3)->where('current_team_id', '=', $curso)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $key => $value) {
-            if (!AttendanceModel::whereDate('created_at', $fecha)->where('student_id', '=', $value[0])->exists() || retirement::whereDate('created_at', $fecha)->where('student_id', '=', $value[0])->exists()) {
+        foreach ($userIds as $userId) {
+            $attendanceExists = AttendanceModel::whereDate('created_at', $fecha)->where('student_id', $userId)->exists();
+            $retirementExists = retirement::whereDate('created_at', $fecha)->where('student_id', $userId)->exists();
+
+            if (!$attendanceExists || $retirementExists) {
                 $totalAusentesHoy++;
             }
         }
@@ -263,23 +343,21 @@ class DateController extends Controller
         return $totalAusentesHoy;
     }
 
-    public function PresenteAusente($id){
-        $this->Initialize();
-
+    public function PresenteAusente($id) {
         $presentAusentes = 0;
 
-        $retirementsModelsCrud = retirement::where('student_id', '=', $id)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentRetirements = array();
+        $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
+        $studentRetirements = array_column($retirements, 'created_at');
 
-        foreach ($retirementsModelsCrud as $key => $value) {
-            array_push($studentRetirements, $value[0]);
-        }
+        $attendances = AttendanceModel::where('student_id', $id)
+            ->whereNotIn('created_at', $studentRetirements)
+            ->pluck('created_at')->toArray();
 
-        $attendancesModelsCrud = AttendanceModel::query()->where('student_id', '=', $id)->whereNotIn('created_at', $studentRetirements)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentAttendances = array();
+        foreach ($attendances as $attendance) {
+            $attendanceTime = Carbon::parse($attendance);
+            $startTime = Carbon::createFromTime($attendanceTime->hour, $attendanceTime->minute, $attendanceTime->second);
 
-        foreach ($attendancesModelsCrud as $key => $value) {
-            if (Carbon::createFromTime($value[0]->hour, $value[0]->minute, $value[0]->second)->betweenIncluded($this->ausenteClases, Carbon::createFromTime(23, 0, 0))) {
+            if ($startTime->betweenIncluded($this->ausenteClases, $this->finClases)) {
                 $presentAusentes++;
             }
         }
@@ -288,25 +366,19 @@ class DateController extends Controller
     }
 
     public function Ausentes($id) {
-        $this->Initialize();
-
         $ausentes = 0;
 
-        $retirementsModelsCrud = retirement::where('student_id', '=', $id)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentRetirements = array();
+        $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
+        $studentRetirements = array_column($retirements, 'created_at');
 
-        foreach ($retirementsModelsCrud as $key => $value) {
-            array_push($studentRetirements, $value[0]);
-        }
+        $attendances = AttendanceModel::where('student_id', $id)
+            ->whereNotIn('created_at', $studentRetirements)
+            ->pluck('created_at')->toArray();
+        $studentAttendances = array_map(function ($attendance) {
+            return Carbon::parse($attendance)->startOfDay();
+        }, $attendances);
 
-        $attendancesModelsCrud = AttendanceModel::query()->where('student_id', '=', $id)->whereNotIn('created_at', $studentRetirements)->get('created_at')->map(function($i) {return array_values($i->only('created_at'));})->toArray();
-        $studentAttendances = array();
-
-        foreach ($attendancesModelsCrud as $key => $value) {
-            array_push($studentAttendances, Carbon::create($value[0]->year, $value[0]->month, $value[0]->day, 0));
-        }
-
-        $contador = $this->inicioCiclo;
+        $contador = Carbon::create(2023, 2, 27, 0);
 
         while ($this->fechaActual >= $contador) {
             if ($contador->isWeekday() && !in_array($contador, $this->feriados) && !in_array($contador, $studentAttendances)) {
@@ -320,14 +392,10 @@ class DateController extends Controller
     }
 
     public function Retiradas($id) {
-        $this->Initialize();
-
         return retirement::where('student_id', '=', $id)->count();
     }
 
     public function Presentes($id) {
-        $this->Initialize();
-
         return AttendanceModel::where('student_id', '=', $id)->count();
     }
 }

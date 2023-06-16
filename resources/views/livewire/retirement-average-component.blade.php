@@ -14,5 +14,5 @@
     <div class="flex mt-4 -mb-8 justify-center">
         <h1>Course 2 retirement students</h1>
     </div>
-    <livewire:retirement-status />
+    <livewire:retirements-average :course="$course"/>
 </div>

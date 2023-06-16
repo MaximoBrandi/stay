@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Controllers\DateController;
 use Livewire\Component;
 use App\Models\AttendanceModel;
 use App\Models\TokenModel;
@@ -14,6 +15,7 @@ class AttendanceQr extends Component
     public $lasttoken;
 
     public $alreadylogedin;
+    public $classes;
 
     private function saveToken(){
         $this->alreadylogedin = false;
@@ -70,6 +72,21 @@ class AttendanceQr extends Component
 
     public function render()
     {
+        if(Auth::user()->privilege->privilege_grade == 1){
+            $dateController = new DateController(Auth::user()->current_team_id);
+
+            if ($dateController->estadoDelDia(Auth::user()->id) == 4 && $dateController->horaDeClases() && $dateController->diaDeClases()) {
+                $this->classes = 1;
+            } else if(!$dateController->diaDeClases()) {
+                $this->classes = 2;
+            } else if(!$dateController->horaDeClases()) {
+                $this->classes = 3;
+            } else if($dateController->estadoDelDia(Auth::user()->id) != 4){
+                $this->classes = 4;
+            }
+        }
+
+
         return view('livewire.attendance-qr');
     }
 }

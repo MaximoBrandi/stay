@@ -14,16 +14,19 @@ use App\Http\Controllers\DateController;
 class DisengageStudents extends LivewireDatatable
 {
     public $model = User::class;
-    public $curso;
+    public $course;
     public $exportable = true;
+    private $dateController;
 
     public function builder()
     {
         if (Auth::user()->privilege->privilege_grade == 3) {
-            $this->curso = Auth::user()->current_team_id;
+            $this->course = Auth::user()->current_team_id;
         }
 
-        return User::query()->whereIn('id', (new DateController)->Libres($this->curso));
+        $this->dateController = new DateController($this->course);
+
+        return User::query()->whereIn('id', $this->dateController->Libres($this->course));
     }
 
     public function columns()
@@ -36,7 +39,7 @@ class DisengageStudents extends LivewireDatatable
         Column::name('id')->label('Student ID'),
 
         Column::callback(['id'], function ($id) {
-            $pistacho = (new DateController)->Ausentes($id);
+            $pistacho = $this->dateController->Ausentes($id);
 
             return $pistacho;
         })->label('Absents')

@@ -14,25 +14,30 @@ class CourseResumeDatabase extends Component
     public $presentes;
     public $presenteAusente;
     public $tardes;
+    public $dashboard;
 
-    private function increment()
+    private function startUp(){
+        return $dateController = new DateController($this->course);
+    }
+
+    private function increment(DateController $dateController)
     {
-        $this->ausentes = (new DateController)->Ausentes($this->alumnoID);
+        $this->ausentes = $dateController->Ausentes($this->alumnoID);
 
-        $this->retiradas = (new DateController)->Retiradas($this->alumnoID);
+        $this->retiradas = $dateController->Retiradas($this->alumnoID);
 
-        $this->presentes = (new DateController)->Presentes($this->alumnoID);
+        $this->presentes = $dateController->Presentes($this->alumnoID);
 
-        $this->tardes = (new DateController)->Tardes($this->alumnoID);
+        $this->tardes = $dateController->Tardes($this->alumnoID);
 
-        $this->presenteAusente = (new DateController)->PresenteAusente($this->alumnoID);
+        $this->presenteAusente = $dateController->PresenteAusente($this->alumnoID);
     }
     public function change($id){
         $this->alumnoID = $id;
     }
     public function render()
     {
-        $this->increment();
+        $this->increment($this->startUp());
 
         return view('livewire.course-resume-database');
     }

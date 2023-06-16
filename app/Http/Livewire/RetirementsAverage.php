@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use App\Models\AttendanceModel;
+use App\Models\retirement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
@@ -11,13 +11,13 @@ use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
 use App\Http\Controllers\DateController;
 
-class AbsentAverage extends LivewireDatatable
+class RetirementsAverage extends LivewireDatatable
 {
     public $model = User::class;
     public $course;
     public $counting = 0;
     public $exportable = true;
-    private $averageAbsent;
+    private $averageRetirement;
 
     public function builder()
     {
@@ -29,9 +29,9 @@ class AbsentAverage extends LivewireDatatable
 
         $this->counting = 0;
 
-        $this->averageAbsent = $dateController->AverageAbsent($this->course);
+        $this->averageRetirement = $dateController->AverageRetirement($this->course);
 
-        return User::query()->whereIn('id', array_keys($this->averageAbsent));
+        return User::query()->whereIn('id', array_keys($this->averageRetirement));
     }
 
     public function columns()
@@ -44,12 +44,12 @@ class AbsentAverage extends LivewireDatatable
         Column::name('id')->label('Student ID'),
 
         Column::callback(['id'], function ($id) {
-            $array = array_values($this->averageAbsent)[$this->counting];
+            $array = array_values($this->averageRetirement)[$this->counting];
 
             $this->counting++;
 
             return $array;
-        })->label('Absents'),
+        })->label('Retirements'),
         ];
     }
 }

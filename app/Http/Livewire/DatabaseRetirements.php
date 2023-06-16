@@ -17,10 +17,11 @@ class DatabaseRetirements extends LivewireDatatable
     public $model = User::class;
 
     public $exportable = true;
+    public $course;
 
     public function builder()
     {
-        return retirement::query()->leftJoin('users', 'users.id', 'retirements.student_id')->where('users.current_team_id', '=', Auth::user()->currentTeam->id);
+        return retirement::query()->leftJoin('users', 'users.id', 'retirements.student_id')->where('users.current_team_id', '=', $this->course);
     }
 
     public function columns()

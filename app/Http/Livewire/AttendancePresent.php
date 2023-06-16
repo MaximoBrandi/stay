@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
+use Mediconesystems\LivewireDatatables\TimeColumn;
+use Mediconesystems\LivewireDatatables\NumberColumn;
 
 class AttendancePresent extends LivewireDatatable
 {
@@ -28,7 +30,11 @@ class AttendancePresent extends LivewireDatatable
 
         Column::name('users.email')->label('Email'),
 
-        Column::name('users.id')->label('Student ID')
+        DateColumn::name('retirements.created_at')->label('Date'),
+
+        TimeColumn::name('retirements.updated_at')->label('Time'),
+
+        NumberColumn::name('users.id')->label('Student ID')
         ];
     }
 }

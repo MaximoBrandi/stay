@@ -14,19 +14,22 @@ use App\Http\Controllers\DateController;
 class AbsentDay extends LivewireDatatable
 {
     public $model = User::class;
-    public $curso;
+    public $course;
     public $counting = 0;
+    private $absentDay;
     public $exportable = true;
 
     public function builder()
     {
         if (Auth::user()->privilege->privilege_grade == 3) {
-            $this->curso = Auth::user()->current_team_id;
+            $this->course = Auth::user()->current_team_id;
         }
+
+        $this->absentDay = (new DateController($this->course))->AbsentDay($this->course);
 
         $this->counting = 0;
 
-        return User::query()->whereIn('id', (new DateController)->AbsentDay($this->curso)[0]);
+        return User::query()->whereIn('id', $this->absentDay[0]);
     }
 
     public function columns()
@@ -39,7 +42,7 @@ class AbsentDay extends LivewireDatatable
         Column::name('id')->label('Student ID'),
 
         Column::callback(['id'], function ($id) {
-            $pistacho = (new DateController)->AbsentDay($this->curso)[1][$this->counting];
+            $pistacho = $this->absentDay[1][$this->counting];
 
             $this->counting++;
 

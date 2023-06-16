@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Auth;
 
 class TeamPolicy
 {
@@ -31,7 +32,11 @@ class TeamPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        if ($user->privilege->privilege_grade == 4) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

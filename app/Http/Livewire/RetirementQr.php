@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\retirement;
 use App\Models\TokenModel;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\DateController;
 
 class RetirementQr extends Component
 {
@@ -14,6 +15,7 @@ class RetirementQr extends Component
     public $lasttoken;
 
     public $alreadylogedin;
+    public $attendance;
 
     /**
      * Almacenar una nueva asistencia en la base de datos.
@@ -68,6 +70,16 @@ class RetirementQr extends Component
 
     public function render()
     {
+        if(Auth::user()->privilege->privilege_grade == 1){
+            $dateController = new DateController(Auth::user()->current_team_id);
+
+            if ($dateController->estadoDelDia(Auth::user()->id) !== 4 ) {
+                $this->attendance = true;
+            }else{
+                $this->attendance = false;
+            }
+        }
+
         return view('livewire.retirement-qr');
     }
 }

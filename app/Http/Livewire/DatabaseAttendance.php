@@ -17,10 +17,11 @@ class DatabaseAttendance extends LivewireDatatable
     public $model = User::class;
 
     public $exportable = true;
+    public $course;
 
     public function builder()
     {
-        return AttendanceModel::query()->leftJoin('users', 'users.id', 'attendance_models.student_id')->where('users.current_team_id', '=', Auth::user()->currentTeam->id);
+        return AttendanceModel::query()->leftJoin('users', 'users.id', 'attendance_models.student_id')->where('users.current_team_id', '=', $this->course);
     }
 
     public function columns()

@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class DatabaseCourse extends Component
 {
-    public $courseX;
+    public $course;
     public function render()
     {
         return view('livewire.database-course');

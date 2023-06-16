@@ -14,5 +14,5 @@
     <div class="flex mt-4 -mb-8 justify-center">
         <h1>Course 2 disengage students</h1>
     </div>
-    <livewire:disengage-students />
+    <livewire:disengage-students :course="$course"/>
 </div>

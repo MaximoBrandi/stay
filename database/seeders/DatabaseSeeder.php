@@ -7,7 +7,9 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Privileges;
 use App\Models\Team;
-
+use App\Models\retirement;
+use App\Models\AttendanceModel;
+use Carbon\Carbon;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -22,6 +24,25 @@ class DatabaseSeeder extends Seeder
         $accountant_id = 0;
         $teams = array();
 
+        $feriados = array(
+            Carbon::create(2023, 3, 24, 0),		// 24/03/2023	Día Nacional de la Memoria por la Verdad y la Justicia
+            Carbon::create(2023, 4, 2, 0),		// 02/04/2023	Día del Veterano y de los Caídos en la Guerra de Malvinas
+            Carbon::create(2023, 4, 6, 0),		// 06/04/2023	Jueves Santo
+            Carbon::create(2023, 4, 7, 0),		// 07/04/2023	Viernes Santo
+            Carbon::create(2023, 5, 1, 0),		// 01/05/2023	Día del Trabajador
+            Carbon::create(2023, 5, 25, 0),		// 25/05/2023	Día de la Revolución de Mayo
+            Carbon::create(2023, 5, 26, 0),		// 26/05/2023	Feriado con fines turísticos
+            Carbon::create(2023, 6, 17, 0),		// 17/06/2023	Paso a la Inmortalidad del Gral. Don Martín Miguel de Güemes
+            Carbon::create(2023, 6, 19, 0),		// 19/06/2023	Feriado con fines turísticos
+            Carbon::create(2023, 6, 20, 0),		// 20/06/2023	Paso a la Inmortalidad del Gral. Manuel Belgrano
+            Carbon::create(2023, 7, 9, 0),		// 09/07/2023	Día de la Independencia
+            Carbon::create(2023, 8, 21, 0),		// 21/08/2023	Paso a la Inmortalidad del Gral. José de San Martín (17/8)
+            Carbon::create(2023, 10, 13, 0),		// 13/10/2023	Feriado con fines turísticos
+            Carbon::create(2023, 10, 16, 0),		// 16/10/2023	Día del Respeto a la Diversidad Cultural (12/10)
+            Carbon::create(2023, 11, 20, 0),		// 20/11/2023	Día de la Soberanía Nacional
+            Carbon::create(2023, 12, 8, 0)		// 08/12/2023	Inmaculada Concepción de María
+        );
+
         $preceptors = User::factory(3)->create();
 
         foreach($preceptors as $preceptor) {
@@ -34,6 +55,7 @@ class DatabaseSeeder extends Seeder
             $preceptor->switchTeam($team = $preceptor->ownedTeams()->create([
                 'name' => 'Course '.$course_id,
                 'personal_team' => false,
+                'shift' => 'night',
             ]));
 
             array_push($teams, $team);
@@ -44,6 +66,21 @@ class DatabaseSeeder extends Seeder
             $privilege->save();
 
             $course_id++;
+        }
+
+        $accountants = User::factory(3)->create();
+
+        foreach($accountants as $accountant) {
+            $accountant_id++;
+            $accountant->name = 'accountant '.$accountant_id;
+            $accountant->email = 'accountant-'.$accountant_id.'@gmail.com';
+            $accountant->current_team_id = $course_id;
+            $accountant->save();
+
+            $privilege = new Privileges;
+            $privilege->user_id = $accountant->id;
+            $privilege->privilege_grade = 4;
+            $privilege->save();
         }
 
         $students = User::factory(60)->create();
@@ -63,26 +100,48 @@ class DatabaseSeeder extends Seeder
             $student->current_team_id = $course_id;
             $student->save();
 
+            $contador = Carbon::create(2023, 2, 27, 0);
+
+            for ($i=0; $i < rand(1,12); $i++) {
+                $hour = rand(19,22);
+                $minute = rand(10,50);
+
+                if ($contador->isWeekday() && !in_array($contador, $feriados)) {
+                    $retirement = new retirement;
+                    $retirement->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
+                    $retirement->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
+                    $retirement->student_id = $student_id + 6;
+                }
+
+                $contador->addDay();
+
+                $retirement->save();
+            }
+
+            $contador = Carbon::create(2023, 2, 27, 0);
+
+            for ($i=0; $i < rand(67,74); $i++) {
+                $hour = 18;
+                $minute = rand(0,46);
+
+                if ($contador->isWeekday() && !in_array($contador, $feriados)) {
+                    $attendance = new AttendanceModel;
+                    $attendance->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
+                    $attendance->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
+                    $attendance->student_id = $student_id + 6;
+                }
+
+                $contador->addDay();
+
+                $attendance->save();
+            }
+
+
             Team::find($course_id)->users()->attach($student, ['role' => 'student']);
 
             $privilege = new Privileges;
             $privilege->user_id = $student->id;
             $privilege->privilege_grade = 1;
-            $privilege->save();
-        }
-
-        $accountants = User::factory(3)->create();
-
-        foreach($accountants as $accountant) {
-            $accountant_id++;
-            $accountant->name = 'accountant '.$accountant_id;
-            $accountant->email = 'accountant-'.$accountant_id.'@gmail.com';
-            $accountant->current_team_id = $course_id;
-            $accountant->save();
-
-            $privilege = new Privileges;
-            $privilege->user_id = $accountant->id;
-            $privilege->privilege_grade = 4;
             $privilege->save();
         }
     }
