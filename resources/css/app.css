@@ -5,3 +5,8 @@
 [x-cloak] {
     display: none;
 }
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}

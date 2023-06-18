@@ -1,5 +1,5 @@
-cp .env.example .env
+cp .env .env
 
 php artisan key:generate
 
-php artisan migrate:fresh -seed
+php artisan migrate:fresh --seed

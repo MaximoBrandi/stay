@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use App\Models\AttendanceModel;
 
 class Attendances extends Component
 {
@@ -10,14 +11,9 @@ class Attendances extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
-    /**
-     * Mostrar la lista de asistencias.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $attendances = Attendance::all();
+        $this->attendances = Attendance::all();
     }
 
     public function render()

@@ -10,10 +10,10 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
 
+
 class AttendanceAbsent extends LivewireDatatable
 {
     public $model = User::class;
-
     public $exportable = true;
 
     public function builder()
@@ -37,5 +37,14 @@ class AttendanceAbsent extends LivewireDatatable
 
         Column::name('users.id')->label('Student ID')
         ];
+    }
+    public function rowClasses($row, $loop)
+    {
+            return 'divide-x divide-gray-100 text-sm text-gray-100 bg-gray-800';
+    }
+
+    public function cellClasses($row, $column)
+    {
+            return 'text-sm text-white';
     }
 }

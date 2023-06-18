@@ -31,4 +31,13 @@ class CourseStudents extends LivewireDatatable
         Column::name('id')->label('Student ID')
         ];
     }
+    public function rowClasses($row, $loop)
+    {
+            return 'divide-x divide-gray-100 text-sm text-gray-100 bg-gray-800';
+    }
+
+    public function cellClasses($row, $column)
+    {
+            return 'text-sm text-white';
+    }
 }

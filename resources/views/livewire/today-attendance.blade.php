@@ -9,7 +9,7 @@
     <div class="flex mt-8 -mb-6 justify-center">
         <h1>Present</h1>
     </div>
-    <livewire:attendance-present />
+        <livewire:attendance-present />
     <div class="flex mt-8 -mb-6 justify-center">
         <h1>Absent</h1>
     </div>

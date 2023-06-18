@@ -27,4 +27,13 @@ class UsersTable extends LivewireDatatable
         DateColumn::name('created_at')->label('Time')
         ];
     }
+    public function rowClasses($row, $loop)
+    {
+            return 'divide-x divide-gray-100 text-sm text-gray-100 bg-gray-800';
+    }
+
+    public function cellClasses($row, $column)
+    {
+            return 'text-sm text-white';
+    }
 }
