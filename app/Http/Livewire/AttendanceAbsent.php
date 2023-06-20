@@ -3,18 +3,26 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use Livewire\Component;
 use App\Models\AttendanceModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
+use App\Http\Livewire\Attendances;
 
 
 class AttendanceAbsent extends LivewireDatatable
 {
     public $model = User::class;
     public $exportable = true;
+    private $attendance;
+
+    public function __construct()
+    {
+        $this->attendance = new Attendances();
+    }
 
     public function builder()
     {
@@ -40,11 +48,16 @@ class AttendanceAbsent extends LivewireDatatable
     }
     public function rowClasses($row, $loop)
     {
+        $darkMode = $this->attendance->getDarkMode();
+        if($darkMode)
+        {
             return 'divide-x divide-gray-100 text-sm text-gray-100 bg-gray-800';
+        }
+        return 'divide-x divide-red-100 text-sm text-red-100 bg-red-800';
     }
 
     public function cellClasses($row, $column)
     {
-            return 'text-sm text-white';
+            return 'text-sm text-black';
     }
 }
