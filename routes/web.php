@@ -53,3 +53,7 @@ Route::middleware([
         return view('database');
     })->name('database');
 });
+
+Route::get('/open-account/{invitation}', [Controller::class, 'accept'])
+->middleware(['signed'])
+->name('open-account.accept');

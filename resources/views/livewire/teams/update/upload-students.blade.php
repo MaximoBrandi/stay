@@ -1,11 +1,11 @@
 <div>
     <x-form-section submit="save">
         <x-slot name="title">
-            {{ __('Course Members') }}
+            {{ __('Course Students') }}
         </x-slot>
 
         <x-slot name="description">
-            {{ __('All of the students that are part of this course.') }}
+            {{ __('Add students to this course.') }}
         </x-slot>
 
         <x-slot name="form">
