@@ -1,6 +1,6 @@
-composer install
+echo "Este programa requiere tener instalado de antemano httpd, php, composer, mysql/mariadb y npm"
 
-sudo dnf install npm
+composer install
 
 npm install
 

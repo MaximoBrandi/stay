@@ -27,13 +27,13 @@ class DatabaseAttendance extends LivewireDatatable
     public function columns()
     {
         return [
-        Column::name('users.name')->label('Name'),
+        Column::name('users.name')->filterable()->label('Name'),
 
         Column::name('users.email')->label('Email'),
 
-        DateColumn::name('attendance_models.created_at')->label('Date'),
+        DateColumn::name('attendance_models.created_at')->defaultSort('desc')->label('Date'),
 
-        TimeColumn::name('attendance_models.updated_at')->label('Time'),
+        TimeColumn::name('attendance_models.updated_at')->filterable()->label('Time'),
 
         NumberColumn::name('users.id')->label('Student ID')
         ];

@@ -23,7 +23,9 @@
         <x-banner />
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @livewire('navigation-menu')
+            @if (config('app.debug') == true || Auth::user()->two_factor_confirmed_at != null)
+                @livewire('navigation-menu')
+            @endif
 
             <!-- Page Heading -->
             @if (isset($header))

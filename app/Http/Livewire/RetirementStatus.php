@@ -5,8 +5,6 @@ namespace App\Http\Livewire;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\retirement;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
@@ -32,9 +30,9 @@ class RetirementStatus extends LivewireDatatable
 
         Column::name('users.email')->label('Email'),
 
-        DateColumn::name('attendance_models.created_at')->label('Date'),
+        DateColumn::name('retirements.created_at')->label('Date'),
 
-        TimeColumn::name('attendance_models.updated_at')->label('Time'),
+        TimeColumn::name('retirements.updated_at')->defaultSort('desc')->label('Time'),
 
         NumberColumn::name('users.id')->label('Student ID')
         ];

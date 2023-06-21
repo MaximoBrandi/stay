@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceModelController;
 use App\Http\Controllers\RetirementController;
+use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,14 @@ Route::controller(RetirementController::class)->group(function () {
     Route::get('/retirement/{token}', 'store');
 });
 
+Route::get('/two-factor-register', [UserProfileController::class, 'show'])
+->name('two-factor-register');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    '2fa-verified'
 ])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');

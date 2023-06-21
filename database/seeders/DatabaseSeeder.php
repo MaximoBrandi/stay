@@ -88,7 +88,7 @@ class DatabaseSeeder extends Seeder
         $course_id = 1;
 
         foreach($students as $student) {
-            if ($student_counter > 24) {
+            if ($student_counter >= 24) {
                 $course_id++;
                 $student_counter = 0;
             }
@@ -102,7 +102,9 @@ class DatabaseSeeder extends Seeder
 
             $contador = Carbon::create(2023, 2, 27, 0);
 
-            for ($i=0; $i < rand(1,12); $i++) {
+            $rounds = rand(0,20);
+
+            for ($i=0; $i < $rounds; $i++) {
                 $hour = rand(19,22);
                 $minute = rand(10,50);
 
@@ -111,6 +113,8 @@ class DatabaseSeeder extends Seeder
                     $retirement->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $retirement->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $retirement->student_id = $student_id + 6;
+                }else{
+                    $rounds++;
                 }
 
                 $contador->addDay();
@@ -120,7 +124,9 @@ class DatabaseSeeder extends Seeder
 
             $contador = Carbon::create(2023, 2, 27, 0);
 
-            for ($i=0; $i < rand(67,74); $i++) {
+            $rounds = rand(45,74);
+
+            for ($i=0; $i < $rounds; $i++) {
                 $hour = 18;
                 $minute = rand(0,46);
 
@@ -129,6 +135,8 @@ class DatabaseSeeder extends Seeder
                     $attendance->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $attendance->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $attendance->student_id = $student_id + 6;
+                }else{
+                    $rounds++;
                 }
 
                 $contador->addDay();

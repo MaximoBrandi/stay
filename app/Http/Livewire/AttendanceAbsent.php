@@ -4,11 +4,10 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use App\Models\AttendanceModel;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
-use Mediconesystems\LivewireDatatables\DateColumn;
+use Mediconesystems\LivewireDatatables\NumberColumn;
 
 class AttendanceAbsent extends LivewireDatatable
 {
@@ -25,7 +24,7 @@ class AttendanceAbsent extends LivewireDatatable
             array_push($attendanceModel, $value[0]);
         }
 
-        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', $attendanceModel)->where('users.id', '>', '3');
+        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', $attendanceModel)->where('users.id', '>', '6');
     }
 
     public function columns()
@@ -35,7 +34,7 @@ class AttendanceAbsent extends LivewireDatatable
 
         Column::name('users.email')->label('Email'),
 
-        Column::name('users.id')->label('Student ID')
+        NumberColumn::name('users.id')->label('Student ID')
         ];
     }
 }

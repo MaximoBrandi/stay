@@ -17,8 +17,8 @@ class CourseResumeMilestones extends Component
     private DateController $dateController;
 
     private function casiLibres(){
-        foreach (User::where('current_team_id', $this->course)->where('id', '>', 3)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID) {
-            if ($this->dateController->Ausentes($studentID[0]) > 25) {
+        foreach (User::where('current_team_id', $this->course)->where('id', '>', 6)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID) {
+            if ($this->dateController->Ausentes($studentID[0]) >= 20) {
                 $this->disengage++;
             }
         }

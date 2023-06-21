@@ -79,7 +79,7 @@
                     </x-nav-link>
                 @endif
                 <!-- Teams Dropdown -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                @if (Auth::user()->privilege->privilege_grade > 2)
                     <div class="ml-3 relative">
                         <x-dropdown align="right" width="60">
                             <x-slot name="trigger">
@@ -87,6 +87,8 @@
                                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                                         @if((Auth::user()->privilege->privilege_grade) != 4)
                                             {{ Auth::user()->currentTeam->name }}
+                                        @else
+                                        Courses
                                         @endif
 {{--
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -98,33 +100,46 @@
 
                             <x-slot name="content">
                                 <div class="w-60">
-                                     <!-- Team Management -->
+                                    <!-- Team Management -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
                                         {{ __('Courses') }}
                                     </div>
-{{--
-                                    <!-- Team Settings -->
-                                    <x-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
-                                        {{ __('Team Settings') }}
-                                    </x-dropdown-link>
 
-                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                                        <x-dropdown-link href="{{ route('teams.create') }}">
-                                            {{ __('Create New Team') }}
-                                        </x-dropdown-link>
-                                    @endcan --}}
+                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                            <x-dropdown-link href="{{ route('teams.create') }}">
+                                                {{ __('Create New Course') }}
+                                            </x-dropdown-link>
+                                        @endcan
 
                                     <!-- Team Switcher -->
-                                    @if (Auth::user()->allTeams()->count() > 1)
-                                        <div class="border-t border-gray-200 dark:border-gray-600"></div>
+                                    @if (Auth::user()->privilege->privilege_grade > 3)
+                                        @if (App\Models\Team::all()->count() > 1)
+                                            <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
-                                        <div class="block px-4 py-2 text-xs text-gray-400">
-                                            {{ __('Switch Teams') }}
-                                        </div>
+                                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                                {{ __('Course Settings') }}
+                                            </div>
 
-                                        @foreach (Auth::user()->allTeams() as $team)
-                                            <x-switchable-team :team="$team" />
-                                        @endforeach
+                                            @foreach (App\Models\Team::all() as $team)
+                                                <x-dropdown-link href="{{ route('teams.show', $team->id) }}">
+                                                    {{$team->name}}
+                                                </x-dropdown-link>
+                                            @endforeach
+                                        @endif
+                                    @else
+                                        @if (Auth::user()->ownedTeams()->count() > 1)
+                                            <div class="border-t border-gray-200 dark:border-gray-600"></div>
+
+                                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                                {{ __('Select course') }}
+                                            </div>
+
+                                            @foreach (Auth::user()->ownedTeams()->get() as $team)
+                                                <x-dropdown-link href="{{ route('teams.show', $team->id) }}">
+                                                    {{$team->name}}
+                                                </x-dropdown-link>
+                                            @endforeach
+                                        @endif
                                     @endif
                                 </div>
                             </x-slot>
@@ -251,11 +266,11 @@
                     </div>
 
                     <!-- Team Settings -->
-                    @if((Auth::user()->privilege->privilege_grade) == 4)
+                    {{-- @if((Auth::user()->privilege->privilege_grade) == 4)
                         <x-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
                             {{ __('Team Settings') }}
                         </x-responsive-nav-link>
-                    @endif
+                    @endif --}}
 
                     @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                         <x-responsive-nav-link href="{{ route('teams.create') }}" :active="request()->routeIs('teams.create')">

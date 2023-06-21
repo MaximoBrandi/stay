@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
-use Mediconesystems\LivewireDatatables\DateColumn;
+use Mediconesystems\LivewireDatatables\NumberColumn;
 
 class CourseStudents extends LivewireDatatable
 {
@@ -18,7 +18,7 @@ class CourseStudents extends LivewireDatatable
 
     public function builder()
     {
-        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id);
+        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->where('id', '>', 6);
     }
 
     public function columns()
@@ -28,7 +28,7 @@ class CourseStudents extends LivewireDatatable
 
         Column::name('email')->label('Email'),
 
-        Column::name('id')->label('Student ID')
+        NumberColumn::name('id')->defaultSort()->label('Student ID')
         ];
     }
 }

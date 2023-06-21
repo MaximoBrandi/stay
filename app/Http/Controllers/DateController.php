@@ -143,15 +143,13 @@ class DateController extends Controller
 
         $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
 
-        $attendances = AttendanceModel::where('student_id', $id)
-            ->whereNotIn('created_at', $retirements)
-            ->pluck('created_at')
-            ->toArray();
+        $attendances = AttendanceModel::where('student_id', $id)->whereNotIn('created_at', $retirements)->pluck('created_at')->toArray();
 
         foreach ($attendances as $attendance) {
-            $attendanceTime = Carbon::createFromFormat('Y-m-d H:i:s', $attendance);
+            $startTime = Carbon::parse($attendance);
+            $attendanceTime = Carbon::createFromTime($startTime->hour, $startTime->minute, $startTime->second);
 
-            if ($attendanceTime->betweenIncluded($this->tardeClases, $this->ausenteClases)) {
+            if ($attendanceTime->betweenIncluded(Carbon::createFromTime(18, 30, 0), Carbon::createFromTime(18, 45, 0))) {
                 $tardes++;
             }
         }
@@ -159,12 +157,12 @@ class DateController extends Controller
         return $tardes;
     }
 
-    public function Libres($curso) {
-        $studentRetirements = User::where('id', '>', 3)
+    public function Libres($curso) : array {
+        $studentRetirements = User::where('id', '>', 6)
             ->where('current_team_id', $curso)
             ->get()
             ->filter(function ($user) {
-                return $this->Ausentes($user->id) >= 30;
+                return $this->Ausentes($user->id) >= 20;
             })
             ->pluck('id')
             ->toArray();
@@ -176,7 +174,7 @@ class DateController extends Controller
         $absentDay = [];
         $diaAusente = $this->DiaConMasAusentes($curso);
 
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
 
         foreach ($userIds as $userId) {
             $contador = Carbon::create(2023, 2, 27, 0);
@@ -247,10 +245,11 @@ class DateController extends Controller
     public function estadoDelDia($id){
         $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();
 
-        $attendances = AttendanceModel::where('student_id', $id)->whereNotIn('created_at', $retirements)->pluck('created_at')->toArray();
+        $attendances = AttendanceModel::whereDate('created_at', \Illuminate\Support\Carbon::today())->where('student_id', $id)->whereNotIn('created_at', $retirements)->pluck('created_at')->toArray();
 
         foreach ($attendances as $attendance) {
-            $attendanceTime = Carbon::createFromFormat('Y-m-d H:i:s', $attendance);
+            $startTime = Carbon::parse($attendance);
+            $attendanceTime = Carbon::createFromTime($startTime->hour, $startTime->minute, $startTime->second);
 
             if ($attendanceTime->betweenIncluded($this->tardeClases, $this->ausenteClases)) {
                 return 1;
@@ -267,7 +266,7 @@ class DateController extends Controller
     }
 
     public function AverageRetirement($curso) {
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
         $averageRetirement = [];
 
         foreach ($userIds as $userId) {
@@ -286,7 +285,7 @@ class DateController extends Controller
     }
 
     public function AverageAbsent($curso) {
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
         $averageAbsent = [];
 
         foreach ($userIds as $userId) {
@@ -305,7 +304,7 @@ class DateController extends Controller
     }
 
     public function PromedioAusentesClases($curso) {
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalAusentes = 0;
 
         foreach ($userIds as $userId) {
@@ -316,7 +315,7 @@ class DateController extends Controller
     }
 
     public function PromedioRetirosSemana($curso) {
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalRetiros = 0;
 
         foreach ($userIds as $userId) {
@@ -328,7 +327,7 @@ class DateController extends Controller
     }
 
     public function AusentesHoy($curso, $fecha) {
-        $userIds = User::where('id', '>', 3)->where('current_team_id', $curso)->pluck('id')->toArray();
+        $userIds = User::where('id', '>', 6)->where('current_team_id', $curso)->pluck('id')->toArray();
         $totalAusentesHoy = 0;
 
         foreach ($userIds as $userId) {
@@ -365,7 +364,7 @@ class DateController extends Controller
         return $presentAusentes;
     }
 
-    public function Ausentes($id) {
+    public function Ausentes($id): int {
         $ausentes = 0;
 
         $retirements = retirement::where('student_id', $id)->pluck('created_at')->toArray();

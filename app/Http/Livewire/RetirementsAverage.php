@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
-use Mediconesystems\LivewireDatatables\DateColumn;
+use Mediconesystems\LivewireDatatables\NumberColumn;
 use App\Http\Controllers\DateController;
 
 class RetirementsAverage extends LivewireDatatable
@@ -41,15 +41,15 @@ class RetirementsAverage extends LivewireDatatable
 
         Column::name('email')->label('Email'),
 
-        Column::name('id')->label('Student ID'),
+        NumberColumn::name('id')->label('Student ID'),
 
-        Column::callback(['id'], function ($id) {
+        NumberColumn::callback(['id'], function ($id) {
             $array = array_values($this->averageRetirement)[$this->counting];
 
             $this->counting++;
 
             return $array;
-        })->label('Retirements'),
+        })->defaultSort('desc')->label('Retirements'),
         ];
     }
 }

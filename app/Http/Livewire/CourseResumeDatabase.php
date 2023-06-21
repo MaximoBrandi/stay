@@ -8,7 +8,7 @@ use App\Http\Controllers\DateController;
 class CourseResumeDatabase extends Component
 {
     public $course;
-    public $alumnoID;
+    public $alumnoID = 20;
     public $ausentes;
     public $retiradas;
     public $presentes;

@@ -27,13 +27,13 @@ class DatabaseRetirements extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::name('users.name')->label('Name'),
+            Column::name('users.name')->filterable()->label('Name'),
 
             Column::name('users.email')->label('Email'),
 
-            DateColumn::name('retirements.created_at')->label('Date'),
+            DateColumn::name('retirements.created_at')->defaultSort('desc')->label('Date'),
 
-            TimeColumn::name('retirements.updated_at')->label('Time'),
+            TimeColumn::name('retirements.updated_at')->filterable()->label('Time'),
 
             NumberColumn::name('users.id')->label('Student ID')
         ];
