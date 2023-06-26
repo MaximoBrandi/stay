@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Teams\Update;
+namespace App\Http\Livewire\Teams\Actions;
 
 use App\Imports\AttendanceImport;
 use Livewire\Component;
@@ -20,6 +20,6 @@ class UploadPresentism extends Component
 
     public function render()
     {
-        return view('livewire.teams.update.upload-presentism');
+        return view('livewire.teams.actions.upload-presentism');
     }
 }

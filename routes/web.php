@@ -28,14 +28,16 @@ Route::controller(RetirementController::class)->group(function () {
     Route::get('/retirement/{token}', 'store');
 });
 
-Route::get('/two-factor-register', [UserProfileController::class, 'show'])
-->name('two-factor-register');
+Route::get('/two-factor-register', [UserProfileController::class, 'show'])->middleware('activated')->name('two-factor-register');
+
+Route::get('/activate-account', [UserProfileController::class, 'show'])->name('activate-account');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    '2fa-verified'
+    '2fa-verified',
+    'activated'
 ])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -52,8 +54,8 @@ Route::middleware([
     Route::get('/database', function () {
         return view('database');
     })->name('database');
-});
 
-Route::get('/open-account/{invitation}', [Controller::class, 'accept'])
-->middleware(['signed'])
-->name('open-account.accept');
+    Route::get('/actions', function () {
+        return view('actions');
+    })->name('actions');
+});

@@ -1,4 +1,14 @@
-@if (config('app.debug') == false && Auth::user()->two_factor_confirmed_at == null)
+@if (Auth::user()->created_at == Auth::user()->updated_at)
+    <x-app-layout>
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+                <div class="mt-10 sm:mt-0">
+                    @livewire('profile.update-password-form')
+                </div>
+            </div>
+        </div>
+    </x-app-layout>
+@elseif (config('app.debug') == false && Auth::user()->two_factor_confirmed_at == null)
     <x-app-layout>
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

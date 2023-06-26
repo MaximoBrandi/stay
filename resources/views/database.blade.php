@@ -5,8 +5,6 @@
         </h2>
     </x-slot>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <link rel="stylesheet" href="vendor/hystModal/hystmodal.min.css">
     <script src="vendor/hystModal/hystmodal.min.js"></script>
 

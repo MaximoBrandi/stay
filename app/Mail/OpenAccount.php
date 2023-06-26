@@ -17,14 +17,14 @@ class OpenAccount extends Mailable
      *
      * @var \Laravel\Jetstream\TeamInvitation
      */
-    public $invitation;
+    public $temporaryPassword;
 
         /**
      * The team invitation instance.
      *
      * @var \Laravel\Jetstream\TeamInvitation
      */
-    public $user;
+    public $loginLink;
 
     /**
      * Create a new message instance.
@@ -32,10 +32,10 @@ class OpenAccount extends Mailable
      * @param  \Laravel\Jetstream\TeamInvitation  $invitation
      * @return void
      */
-    public function __construct(TokenModel $invitation)
+    public function __construct($temporaryPassword, $loginLink)
     {
-        $this->invitation = $invitation;
-        $this->invitation = $invitation;
+        $this->temporaryPassword = $temporaryPassword;
+        $this->loginLink = $loginLink;
     }
 
     /**
@@ -45,8 +45,6 @@ class OpenAccount extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.open-account', ['acceptUrl' => URL::signedRoute('team-invitations.accept', [
-            'invitation' => $this->invitation,
-        ])])->subject(__('Team Invitation'));
+        return $this->markdown('emails.open-account', ['loginLink' => $this->loginLink, 'password' => $this->temporaryPassword])->subject(__('Account activation'));
     }
 }

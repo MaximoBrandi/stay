@@ -26,7 +26,7 @@ class DisengageStudents extends LivewireDatatable
 
         $this->dateController = new DateController($this->course);
 
-        return User::query()->whereIn('id', $this->dateController->Libres($this->course));
+        return User::query()->whereIn('id', $this->dateController->Libres());
     }
 
     public function columns()
@@ -47,3 +47,5 @@ class DisengageStudents extends LivewireDatatable
         ];
     }
 }
+
+// 292 ms

@@ -29,7 +29,7 @@ class AbsentDay extends LivewireDatatable
 
         $this->counting = 0;
 
-        return User::query()->whereIn('id', $this->absentDay[0]);
+        return User::query()->whereIn('id', array_keys($this->absentDay));
     }
 
     public function columns()
@@ -42,7 +42,7 @@ class AbsentDay extends LivewireDatatable
         NumberColumn::name('id')->label('Student ID'),
 
         NumberColumn::callback(['id'], function ($id) {
-            $pistacho = $this->absentDay[1][$this->counting];
+            $pistacho = array_values($this->absentDay)[$this->counting];
 
             $this->counting++;
 
@@ -51,3 +51,5 @@ class AbsentDay extends LivewireDatatable
         ];
     }
 }
+
+// 4811 ms

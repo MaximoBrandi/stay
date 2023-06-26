@@ -29,7 +29,7 @@ class RetirementsAverage extends LivewireDatatable
 
         $this->counting = 0;
 
-        $this->averageRetirement = $dateController->AverageRetirement($this->course);
+        $this->averageRetirement = $dateController->AverageRetirement();
 
         return User::query()->whereIn('id', array_keys($this->averageRetirement));
     }
@@ -53,3 +53,5 @@ class RetirementsAverage extends LivewireDatatable
         ];
     }
 }
+
+// 24 ms

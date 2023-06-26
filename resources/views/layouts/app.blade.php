@@ -16,6 +16,8 @@
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <script type="text/javascript" src="instascan.min.js"></script>
 
+        <script src="https://cdn.tailwindcss.com"></script>
+
         <!-- Styles -->
         @livewireStyles
     </head>
@@ -23,7 +25,7 @@
         <x-banner />
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @if (config('app.debug') == true || Auth::user()->two_factor_confirmed_at != null)
+            @if (config('app.debug') == true || Auth::user()->created_at != Auth::user()->updated_at && Auth::user()->two_factor_confirmed_at != null)
                 @livewire('navigation-menu')
             @endif
 

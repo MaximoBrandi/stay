@@ -8,7 +8,7 @@ use App\Http\Controllers\DateController;
 class CourseResumeDatabase extends Component
 {
     public $course;
-    public $alumnoID = 20;
+    public $alumnoID;
     public $ausentes;
     public $retiradas;
     public $presentes;
@@ -37,7 +37,9 @@ class CourseResumeDatabase extends Component
     }
     public function render()
     {
-        $this->increment($this->startUp());
+        if (isset($this->alumnoID)) {
+            $this->increment($this->startUp());
+        }
 
         return view('livewire.course-resume-database');
     }

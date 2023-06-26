@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Controllers\DateController;
 use App\Models\User;
 use App\Models\AttendanceModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
@@ -17,14 +19,7 @@ class AttendanceAbsent extends LivewireDatatable
 
     public function builder()
     {
-        $attendanceModelsCrud = AttendanceModel::whereDate('created_at', \Illuminate\Support\Carbon::today())->get('student_id')->map(function($i) {return array_values($i->only('student_id'));})->toArray();
-        $attendanceModel = array();
-
-        foreach ($attendanceModelsCrud as $key => $value) {
-            array_push($attendanceModel, $value[0]);
-        }
-
-        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', $attendanceModel)->where('users.id', '>', '6');
+        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', ((new DateController(Auth::user()->current_team_id))->AusentesHoy(Carbon::today(), true)))->where('users.id', '>', '6');
     }
 
     public function columns()

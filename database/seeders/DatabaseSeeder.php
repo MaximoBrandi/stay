@@ -124,7 +124,7 @@ class DatabaseSeeder extends Seeder
 
             $contador = Carbon::create(2023, 2, 27, 0);
 
-            $rounds = rand(45,74);
+            $rounds = rand(55,77);
 
             for ($i=0; $i < $rounds; $i++) {
                 $hour = 18;

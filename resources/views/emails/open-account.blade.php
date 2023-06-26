@@ -1,11 +1,13 @@
 @component('mail::message')
-    {{ __('You have been invited to join the :team team!', ['team' => $invitation->name]) }}
+    {{ __('Your Stay account needs to be activated!')}}
 
-    {{ __('You may accept this invitation by clicking the button below:') }}
+    {{ __('You can do it login in with your email and the next password temporary:') }}
 
-    @component('mail::button', ['url' => $acceptUrl])
-    {{ __('Accept Invitation') }}
+    {{ $password }}
+
+    @component('mail::button', ['url' => $loginLink])
+        {{ __('Log in') }}
     @endcomponent
 
-    {{ __('If you did not expect to receive an invitation to this team, you may discard this email.') }}
+    {{ __('To activate your account you will need first to change your temporary password for a secure one and enable 2FA authentication.') }}
 @endcomponent

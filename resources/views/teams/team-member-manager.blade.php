@@ -8,20 +8,6 @@
         </div>
     @endif
 
-    <x-section-border />
-
-    <!-- Add Course Member -->
-    <div class="mt-10 sm:mt-0">
-       <livewire:teams.update.upload-presentism :course="$team" />
-    </div>
-
-    <x-section-border />
-
-    <!-- Add Course Member -->
-    <div class="mt-10 sm:mt-0">
-       <livewire:teams.update.upload-absentism :course="$team" />
-    </div>
-
     @if ($team->teamInvitations->isNotEmpty() && Gate::check('addTeamMember', $team))
         <x-section-border />
 

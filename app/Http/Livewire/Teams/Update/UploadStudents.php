@@ -5,10 +5,11 @@ namespace App\Http\Livewire\Teams\Update;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Imports\UsersImport;
+use App\Mail\OpenAccount;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\User;
 use App\Models\Privileges;
-use App\Models\Team;
+use Illuminate\Support\Facades\Mail;
 
 class UploadStudents extends Component
 {
@@ -16,6 +17,7 @@ class UploadStudents extends Component
     public $excel;
     public $team;
     public $course;
+    private $loginLink = "http://localhost:8000/login";
     public function save()
     {
         $this->team = Excel::toArray(new UsersImport, $this->excel)[0];
@@ -33,6 +35,10 @@ class UploadStudents extends Component
             $privilege->user_id = $student->id;
             $privilege->privilege_grade = 1;
             $privilege->save();
+
+            $temporaryPassword = $this->team[$key][2];
+
+            Mail::to($student)->send(new OpenAccount($temporaryPassword, $this->loginLink));
         }
 
         $this->emit('saved');

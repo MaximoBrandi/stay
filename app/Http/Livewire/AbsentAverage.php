@@ -10,6 +10,7 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use App\Http\Controllers\DateController;
+use Illuminate\Support\Benchmark;
 
 class AbsentAverage extends LivewireDatatable
 {
@@ -53,3 +54,6 @@ class AbsentAverage extends LivewireDatatable
         ];
     }
 }
+
+
+//468ms

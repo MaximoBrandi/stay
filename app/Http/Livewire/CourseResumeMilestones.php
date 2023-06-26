@@ -13,33 +13,16 @@ class CourseResumeMilestones extends Component
     public $PromedioAusentes = 0;
     public $PromedioRetiros = 0;
     public $diaMasAusentes;
-
     private DateController $dateController;
-
-    private function casiLibres(){
-        foreach (User::where('current_team_id', $this->course)->where('id', '>', 6)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID) {
-            if ($this->dateController->Ausentes($studentID[0]) >= 20) {
-                $this->disengage++;
-            }
-        }
-    }
-
-    private function PromedioAusentes(){
-        $this->PromedioAusentes = $this->dateController->PromedioAusentesClases($this->course);
-    }
-
-    private function PromedioRetiros(){
-        $this->PromedioRetiros = $this->dateController->PromedioRetirosSemana($this->course);
-    }
 
     public function render()
     {
         $this->dateController = new DateController($this->course);
 
-        $this->PromedioAusentes();
-        $this->PromedioRetiros();
-        $this->casiLibres();
-        $this->diaMasAusentes = $this->dateController->DiaConMasAusentes($this->course);
+        $this->PromedioAusentes = $this->dateController->PromedioAusentesClases();
+        $this->PromedioRetiros = $this->dateController->PromedioRetirosSemana();
+        $this->disengage = count($this->dateController->Libres());
+        $this->diaMasAusentes = $this->dateController->DiaConMasAusentes(); // 3838 ms
 
         return view('livewire.course-resume-milestones');
     }

@@ -60,6 +60,11 @@
                             {{ __('Database') }}
                         </x-nav-link>
                     </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link href="{{ route('actions') }}" :active="request()->routeIs('actions')">
+                            {{ __('Actions') }}
+                        </x-nav-link>
+                    </div>
                 @elseif((Auth::user()->privilege->privilege_grade) == 3)
                 @endif
             </div>
