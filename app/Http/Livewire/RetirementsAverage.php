@@ -21,7 +21,7 @@ class RetirementsAverage extends LivewireDatatable
 
     public function builder()
     {
-        $dateController = new DateController($this->course);
+        $dateController = new DateController($this->course, true);
 
         if (Auth::user()->privilege->privilege_grade == 3) {
             $this->course = Auth::user()->current_team_id;

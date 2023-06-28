@@ -22,7 +22,7 @@ class AbsentAverage extends LivewireDatatable
 
     public function builder()
     {
-        $dateController = new DateController($this->course);
+        $dateController = new DateController($this->course, true);
 
         if (Auth::user()->privilege->privilege_grade == 3) {
             $this->course = Auth::user()->current_team_id;
@@ -30,7 +30,7 @@ class AbsentAverage extends LivewireDatatable
 
         $this->counting = 0;
 
-        $this->averageAbsent = $dateController->AverageAbsent($this->course);
+        $this->averageAbsent = $dateController->AverageAbsent();
 
         return User::query()->whereIn('id', array_keys($this->averageAbsent));
     }

@@ -8,6 +8,8 @@ use App\Models\AttendanceModel;
 use App\Models\retirement;
 use App\Models\User;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Collection;
+use JsonSerializable;
 
 class DateController extends Controller
 {
@@ -27,19 +29,19 @@ class DateController extends Controller
     private readonly Carbon $fechaActual;
 
     private readonly array $feriados;
-    private readonly array $attendances;
+    private $attendances;
 
-    private readonly array $attendancesDays;
+    private $attendancesDays;
 
-    private readonly array $retirements;
-    private readonly array $absents;
-    private readonly array $classDays;
+    private $retirements;
+    private $absents;
+    private $classDays;
 
     private readonly int $clases;
     private $students;
     private $prom;
 
-    public function __construct($course)
+    public function __construct($course, bool $datatable = null)
     {
         $this->course = $course;
 
@@ -78,7 +80,7 @@ class DateController extends Controller
 
         $this->students = User::where('current_team_id', $this->course)->where('id', '>', 6)->get();
 
-        $this->attendances = AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($attendance) {return $attendance->pluck('created_at')->toArray();})->toArray() : array("null" => "null");
+        $this->attendances = AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? collect(AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($attendance) {return $attendance->pluck('created_at')->toArray();})) : collect(array("null" => "null"));
 
         foreach ($this->attendances as $usuarioId => $fechasPresentes) {
             $fechasPresentes = collect($fechasPresentes)->map(function ($attendance) {
@@ -88,11 +90,11 @@ class DateController extends Controller
             $attendancesDays[$usuarioId] = array_values($fechasPresentes);
         }
 
-        $this->attendancesDays = isset($attendancesDays) ? $attendancesDays :  array();
+        $this->attendancesDays = isset($attendancesDays) ? collect($attendancesDays) :  collect(array());
 
-        $this->retirements =  retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($retirement) {return $retirement->pluck('created_at')->toArray();})->toArray() : array("null" => "null");
+        $this->retirements =  retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? collect(retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($retirement) {return $retirement->pluck('created_at')->toArray();})) : collect(array("null" => "null"));
 
-        $this->classDays = array_values(array_diff(CarbonPeriod::create( Carbon::create(2023, 2, 27, 0), Carbon::now())->filter('isWeekday')->toArray(), $this->feriados ));
+        $this->classDays = collect(array_values(array_diff(CarbonPeriod::create( Carbon::create(2023, 2, 27, 0), Carbon::now())->filter('isWeekday')->toArray(), $this->feriados )));
 
         foreach ($this->attendancesDays as $usuarioId => $fechasPresentes) {
             $classDays = collect($this->classDays)->map(function ($attendance) {
@@ -102,7 +104,7 @@ class DateController extends Controller
             $resultados[$usuarioId] = array_values(array_diff($classDays, $fechasPresentes));
         }
 
-        $this->absents = isset($resultados) ? $resultados :  array("null" => "null");
+        $this->absents = isset($resultados) ? collect($resultados) :  collect(array("null" => "null"));
 
         $contador = Carbon::create(2023, 2, 27, 0);
 
@@ -165,32 +167,6 @@ class DateController extends Controller
         }
     }
 
-    public function Tardes($id) {
-        $tardes = 0;
-
-        if (array_key_exists($id,$this->attendances)) {
-            foreach ($this->attendances[$id] as $attendance) {
-                if ($attendance->format('H:i:s') >= $this->tardeClases && $attendance->format('H:i:s') <= $this->ausenteClases) {
-                    $tardes++;
-                }
-            }
-        }
-
-        return $tardes;
-    } // 0.02~ ms
-
-    public function Libres() : array {
-        $libres = array();
-
-        foreach ($this->students as $key => $student) {
-            if ($this->Ausentes($student->id) >= 25) {
-                array_push($libres, $student->id);
-            }
-        }
-
-        return $libres;
-    } // 2.134 ms
-
     public function AbsentDay() {
         $absentDay = [];
         $diaAusente = $this->DiaConMasAusentes();
@@ -223,63 +199,6 @@ class DateController extends Controller
 
         return $absentDay;
     } // 38 ms
-
-    public function DiaConMasAusentes() {
-        $contador = Carbon::create(2023, 2, 27, 0);
-        $dias = [
-            'Monday' => 0,
-            'Tuesday' => 0,
-            'Wednesday' => 0,
-            'Thursday' => 0,
-            'Friday' => 0,
-        ];
-
-        while ($this->fechaActual >= $contador) {
-            if ($contador->isWeekday() && !in_array($contador, $this->feriados)) {
-                $dias[$contador->dayName] += $this->AusentesHoy($contador);
-            }
-
-            $contador->addDay(); // Avanza al siguiente día
-        }
-
-        return array_search(max($dias), $dias);
-    } // 17 ms
-
-    public function diaDeClases(){
-        if ($this->fechaActual->isWeekday() && !in_array($this->fechaActual, $this->feriados)) {
-            return true;
-        }else{
-            return false;
-        }
-    } // 0.265 ms
-
-    public function horaDeClases(){
-        if (Carbon::now()->format('H:i:s') >= $this->aperturaClases && Carbon::now()->format('H:i:s') <= $this->finClases) {
-            return true;
-        }else{
-            return false;
-        }
-    } // 0.8 ms
-
-    public function estadoDelDia(int $id){
-        if (array_key_exists(strval($id), $this->attendances)) {
-            foreach ($this->attendances[$id] as $fecha) {
-                if ($fecha->isSameDay(Carbon::today())) {
-                    if ($fecha->format('H:i:s') >= $this->tardeClases && $fecha->format('H:i:s') <= $this->ausenteClases) {
-                        return 1;
-                    }else
-                    if ($fecha->format('H:i:s') >= $this->ausenteClases && $fecha->format('H:i:s') <= $this->finClases) {
-                        return 2;
-                    }else
-                    if ($fecha->format('H:i:s') >= $this->aperturaClases && $fecha->format('H:i:s') <= $this->inicioClases) {
-                        return 3;
-                    }
-                }
-            }
-        }
-
-        return 4;
-    } // 0.76 ms
 
     public function AverageRetirement() {
         $averageRetirement = [];
@@ -317,9 +236,92 @@ class DateController extends Controller
         return $averageAbsent;
     } // 0.032 ms
 
+    public function Libres() : array {
+        $libres = array();
+
+        foreach ($this->students as $key => $student) {
+            if ($this->Ausentes($student->id) >= 25) {
+                array_push($libres, $student->id);
+            }
+        }
+
+        return $libres;
+    } // 2.134 ms
+
+    public function DiaConMasAusentes() {
+        $contador = Carbon::create(2023, 2, 27, 0);
+        $dias = [
+            'Monday' => 0,
+            'Tuesday' => 0,
+            'Wednesday' => 0,
+            'Thursday' => 0,
+            'Friday' => 0,
+        ];
+
+        while ($this->fechaActual >= $contador) {
+            if ($contador->isWeekday() && !in_array($contador, $this->feriados)) {
+                $dias[$contador->dayName] += $this->AusentesHoy($contador);
+            }
+
+            $contador->addDay(); // Avanza al siguiente día
+        }
+
+        return array_search(max($dias), $dias);
+    } // 17 ms
+
+    public function Tardes($id) {
+        $tardes = 0;
+
+        if ($this->attendances->has($id)) {
+            foreach ($this->attendances[$id] as $attendance) {
+                if ($attendance->format('H:i:s') >= $this->tardeClases && $attendance->format('H:i:s') <= $this->ausenteClases) {
+                    $tardes++;
+                }
+            }
+        }
+
+        return $tardes;
+    } // 0.02~ ms
+
+    public function diaDeClases(){
+        if ($this->fechaActual->isWeekday() && !in_array($this->fechaActual, $this->feriados)) {
+            return true;
+        }else{
+            return false;
+        }
+    } // 0.265 ms
+
+    public function horaDeClases(){
+        if (Carbon::now()->format('H:i:s') >= $this->aperturaClases && Carbon::now()->format('H:i:s') <= $this->finClases) {
+            return true;
+        }else{
+            return false;
+        }
+    } // 0.8 ms
+
+    public function estadoDelDia(int $id){
+        if ($this->attendances->has($id)) {
+            foreach ($this->attendances[$id] as $fecha) {
+                if ($fecha->isSameDay(Carbon::today())) {
+                    if ($fecha->format('H:i:s') >= $this->tardeClases && $fecha->format('H:i:s') <= $this->ausenteClases) {
+                        return 1;
+                    }else
+                    if ($fecha->format('H:i:s') >= $this->ausenteClases && $fecha->format('H:i:s') <= $this->finClases) {
+                        return 2;
+                    }else
+                    if ($fecha->format('H:i:s') >= $this->aperturaClases && $fecha->format('H:i:s') <= $this->inicioClases) {
+                        return 3;
+                    }
+                }
+            }
+        }
+
+        return 4;
+    } // 0.76 ms
+
     public function PromedioAusentesClases() {
         $totalAusentes = null;
-        foreach ($this->absents as $absents) {
+        foreach ($this->absents->toArray() as $absents) {
             $totalAusentes += count($absents);
         }
 
@@ -329,7 +331,7 @@ class DateController extends Controller
     public function PromedioRetirosSemana() {
         $totalRetiros = null;
 
-        foreach ($this->retirements as $retirements) {
+        foreach ($this->retirements->toArray() as $retirements) {
             $totalRetiros += count($retirements);
         }
 
@@ -341,7 +343,7 @@ class DateController extends Controller
         $totalAusentesHoy = 0;
 
         foreach ($this->students as $key => $student) {
-            if (array_key_exists($student->id, $this->absents)) {
+            if ($this->absents->has($student->id)) {
                 if (array_search($fecha->toDateString(), $this->absents[$student->id])) {
                     if($ids){
                         $keys[$key] = $key;
@@ -362,7 +364,7 @@ class DateController extends Controller
     public function PresenteAusente($id) {
         $presentAusentes = 0;
 
-        if (array_key_exists($id, $this->attendances)) {
+        if ($this->attendances->has($id)) {
             foreach ($this->attendances[$id] as $attendance) {
                 if ($attendance->format('H:i:s') >= $this->ausenteClases && $attendance->format('H:i:s') <= $this->finClases) {
                     $presentAusentes++;
@@ -376,14 +378,14 @@ class DateController extends Controller
     public function Ausentes($id): int {
         $ausentes = 0;
 
-        return ((array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id]) / 2) : 0)  + $this->PresenteAusente($id) + (array_key_exists($id, $this->absents) ? count($this->absents[$id]) : 0);
+        return (($this->retirements->has($id)) ? (count($this->retirements[$id]) / 2) : 0)  + $this->PresenteAusente($id) + ($this->retirements->has($id) ? count($this->absents[$id]) : 0);
     } // 0.12 ms
 
     public function Retiradas($id) {
-        return (array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id])) : 0;
+        return ($this->retirements->has($id)) ? (count($this->retirements[$id])) : 0;
     } // 0.030 ms
 
     public function Presentes($id) {
-        return (array_key_exists($id, $this->attendances) ? count($this->attendances[$id]) : 0) - ((array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id]) / 2) : 0) - $this->PresenteAusente($id);
+        return ($this->attendances->has($id) ? count($this->attendances[$id]) : 0) - (($this->retirements->has($id)) ? (count($this->retirements[$id]) / 2) : 0) - $this->PresenteAusente($id);
     } // 0.12 ms
 }

@@ -42,17 +42,12 @@
                         @php
                             $value = true;
                         @endphp
-                        <livewire:course-resume-database :course=" Auth::user()->current_team_id " :dashboard=" $value " />
+                        <livewire:database.course-resume :course=" Auth::user()->current_team_id " :dashboard=" $value " />
                     </div>
                 </div>
                 <div class="bg-white py-4 dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                     <div>
-                        <livewire:course-resume-milestones :course=" Auth::user()->current_team_id " />
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div>
-                        <livewire:attendances />
+                        <livewire:database.course-milestones :course=" Auth::user()->current_team_id " />
                     </div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
