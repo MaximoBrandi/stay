@@ -11,24 +11,12 @@
                   </defs>
                   <rect fill="url(#ea469ae8-e6ec-4aca-8875-fc402da4d16e)" width="52" height="24"></rect>
                 </svg>
-                <span class="relative">{{$course->name}}</span>
+                <span class="relative">{{$grade->grade}}</span>
               </span>
             </h2>
         </div>
-        <livewire:database.course-milestones :course=" $course->id " />
+        <livewire:database.grade.grade-milestones :grade=" $grade " />
 
-        <livewire:database.course-resume :course="$course->id" />
-        <div class="flex mt-8 dark:text-gray-200 -mb-8 justify-center">
-            <h1>{{$course->name}} attendances</h1>
-        </div>
-        <livewire:database-attendance :course="$course->id"/>
-        <div class="flex mt-8 dark:text-gray-200 -mb-8 justify-center">
-            <h1>{{$course->name}} retirements</h1>
-        </div>
-        <livewire:database-retirements :course="$course->id"/>
-            <div class="flex mt-8 dark:text-gray-200 -mb-8 justify-center">
-                <h1>{{$course->name}} absents</h1>
-            </div>
-        <livewire:database-retirements :course="$course->id"/>
+        <livewire:database.grade.grade-resume :grade=" $grade " />
     </div>
 </div>

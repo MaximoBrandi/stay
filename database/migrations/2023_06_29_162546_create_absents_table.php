@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Grade;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -12,13 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('absents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->index();
-            $table->foreignIdFor(Grade::class);
-            $table->string('name');
-            $table->string('shift')->default('night');
-            $table->boolean('personal_team');
+            $table->foreignIdFor(User::class);
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('absents');
     }
 };

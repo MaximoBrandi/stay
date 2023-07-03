@@ -9,6 +9,7 @@ use App\Models\Privileges;
 use App\Models\Team;
 use App\Models\retirement;
 use App\Models\AttendanceModel;
+use App\Models\Grade;
 use Carbon\Carbon;
 class DatabaseSeeder extends Seeder
 {
@@ -45,6 +46,8 @@ class DatabaseSeeder extends Seeder
 
         $preceptors = User::factory(3)->create();
 
+        $grade = null;
+
         foreach($preceptors as $preceptor) {
             $preceptor_id++;
             $preceptor->name = 'Preceptor '.$preceptor_id;
@@ -52,10 +55,21 @@ class DatabaseSeeder extends Seeder
             $preceptor->current_team_id = $course_id;
             $preceptor->save();
 
+            if($course_id > 2){
+                $grade = new Grade;
+                $grade->grade = "6 Grade";
+                $grade->save();
+            }elseif($course_id == 1 && !($grade instanceof Grade)){
+                $grade = new Grade;
+                $grade->grade = "5 Grade";
+                $grade->save();
+            }
+
             $preceptor->switchTeam($team = $preceptor->ownedTeams()->create([
                 'name' => 'Course '.$course_id,
                 'personal_team' => false,
                 'shift' => 'night',
+                'grade_id' => $grade->id,
             ]));
 
             array_push($teams, $team);
