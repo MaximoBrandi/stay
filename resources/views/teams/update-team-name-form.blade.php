@@ -4,7 +4,7 @@
     </x-slot>
 
     <x-slot name="description">
-        {{ __('The team\'s name and owner information.') }}
+        {{ __('The course\'s name.') }}
     </x-slot>
 
     <x-slot name="form">
@@ -26,11 +26,11 @@
     @if (Gate::check('update', $team))
         <x-slot name="actions">
             <x-action-message class="mr-3" on="saved">
-                {{ __('Saved.') }}
+                {{ __('Name changed.') }}
             </x-action-message>
 
             <x-button>
-                {{ __('Save') }}
+                {{ __('Change course name') }}
             </x-button>
         </x-slot>
     @endif

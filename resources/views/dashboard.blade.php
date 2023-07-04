@@ -34,20 +34,20 @@
                                   </defs>
                                   <rect fill="url(#ea469ae8-e6ec-4aca-8875-fc402da4d16e)" width="52" height="24"></rect>
                                 </svg>
-                                <span class="relative">Today's attendance on course </span>
+                                <span class="relative">Today's attendance on </span>
                               </span>
-                              {{Auth::user()->current_team_id}}
+                              {{Auth::user()->currentTeam->name}}
                             </h2>
                         </div>
                         @php
                             $value = true;
                         @endphp
-                        <livewire:course-resume-database :course=" Auth::user()->current_team_id " :dashboard=" $value " />
+                        <livewire:course-resume-database :course=" Auth::user()->currentTeam " :dashboard=" $value " />
                     </div>
                 </div>
                 <div class="bg-white py-4 dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                     <div>
-                        <livewire:course-resume-milestones :course=" Auth::user()->current_team_id " />
+                        <livewire:course-resume-milestones :course=" Auth::user()->currentTeam " />
                     </div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">

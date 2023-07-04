@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\AttendanceModel;
 use App\Models\retirement;
@@ -41,6 +41,10 @@ class DateController extends Controller
 
     public function __construct($course)
     {
+        // Testing time
+        $knownDate = Carbon::create(Carbon::now()->year, Carbon::now()->month, Carbon::now()->day, 18, 20);
+        Carbon::setTestNow($knownDate);
+
         $this->course = $course;
 
         $this->HorarioActual(Team::find($this->course)->pluck('shift')->first());
@@ -48,7 +52,8 @@ class DateController extends Controller
         $this->Initialize();
     }
 
-    private function Initialize(){
+    private function Initialize()
+    {
         $this->inicioCiclo = Carbon::create(2023, 2, 27, 0);
         $this->finCiclo = Carbon::create(2023, 12, 22, 0);
 
@@ -58,41 +63,51 @@ class DateController extends Controller
         $this->fechaActual = Carbon::now();
 
         $this->feriados = array(
-            Carbon::create(2023, 3, 24, 0),		// 24/03/2023	Día Nacional de la Memoria por la Verdad y la Justicia
-            Carbon::create(2023, 4, 2, 0),		// 02/04/2023	Día del Veterano y de los Caídos en la Guerra de Malvinas
-            Carbon::create(2023, 4, 6, 0),		// 06/04/2023	Jueves Santo
-            Carbon::create(2023, 4, 7, 0),		// 07/04/2023	Viernes Santo
-            Carbon::create(2023, 5, 1, 0),		// 01/05/2023	Día del Trabajador
-            Carbon::create(2023, 5, 25, 0),		// 25/05/2023	Día de la Revolución de Mayo
-            Carbon::create(2023, 5, 26, 0),		// 26/05/2023	Feriado con fines turísticos
-            Carbon::create(2023, 6, 17, 0),		// 17/06/2023	Paso a la Inmortalidad del Gral. Don Martín Miguel de Güemes
-            Carbon::create(2023, 6, 19, 0),		// 19/06/2023	Feriado con fines turísticos
-            Carbon::create(2023, 6, 20, 0),		// 20/06/2023	Paso a la Inmortalidad del Gral. Manuel Belgrano
-            Carbon::create(2023, 7, 9, 0),		// 09/07/2023	Día de la Independencia
-            Carbon::create(2023, 8, 21, 0),		// 21/08/2023	Paso a la Inmortalidad del Gral. José de San Martín (17/8)
-            Carbon::create(2023, 10, 13, 0),		// 13/10/2023	Feriado con fines turísticos
-            Carbon::create(2023, 10, 16, 0),		// 16/10/2023	Día del Respeto a la Diversidad Cultural (12/10)
-            Carbon::create(2023, 11, 20, 0),		// 20/11/2023	Día de la Soberanía Nacional
-            Carbon::create(2023, 12, 8, 0)		// 08/12/2023	Inmaculada Concepción de María
+            Carbon::create(2023, 3, 24, 0), // 24/03/2023	Día Nacional de la Memoria por la Verdad y la Justicia
+            Carbon::create(2023, 4, 2, 0), // 02/04/2023	Día del Veterano y de los Caídos en la Guerra de Malvinas
+            Carbon::create(2023, 4, 6, 0), // 06/04/2023	Jueves Santo
+            Carbon::create(2023, 4, 7, 0), // 07/04/2023	Viernes Santo
+            Carbon::create(2023, 5, 1, 0), // 01/05/2023	Día del Trabajador
+            Carbon::create(2023, 5, 25, 0), // 25/05/2023	Día de la Revolución de Mayo
+            Carbon::create(2023, 5, 26, 0), // 26/05/2023	Feriado con fines turísticos
+            Carbon::create(2023, 6, 17, 0), // 17/06/2023	Paso a la Inmortalidad del Gral. Don Martín Miguel de Güemes
+            Carbon::create(2023, 6, 19, 0), // 19/06/2023	Feriado con fines turísticos
+            Carbon::create(2023, 6, 20, 0), // 20/06/2023	Paso a la Inmortalidad del Gral. Manuel Belgrano
+            Carbon::create(2023, 7, 9, 0), // 09/07/2023	Día de la Independencia
+            Carbon::create(2023, 8, 21, 0), // 21/08/2023	Paso a la Inmortalidad del Gral. José de San Martín (17/8)
+            Carbon::create(2023, 10, 13, 0), // 13/10/2023	Feriado con fines turísticos
+            Carbon::create(2023, 10, 16, 0), // 16/10/2023	Día del Respeto a la Diversidad Cultural (12/10)
+            Carbon::create(2023, 11, 20, 0), // 20/11/2023	Día de la Soberanía Nacional
+            Carbon::create(2023, 12, 8, 0) // 08/12/2023	Inmaculada Concepción de María
         );
 
-        $this->students = User::where('current_team_id', $this->course)->where('id', '>', 6)->get();
+        $this->students = User::whereHas('privilege', function ($query) {
+            return $query->where('privilege_grade', '=', 1);
+        })->where('current_team_id', '=', $this->course)->get();
 
-        $this->attendances = AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($attendance) {return $attendance->pluck('created_at')->toArray();})->toArray() : array("null" => "null");
+        $this->attendances = AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? AttendanceModel::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($attendance) {
+            return $attendance->pluck('created_at')->toArray();
+        })->toArray() : array("null" => "null");
 
         foreach ($this->attendances as $usuarioId => $fechasPresentes) {
             $fechasPresentes = collect($fechasPresentes)->map(function ($attendance) {
-                return $attendance->toDateString();
+                if (!is_string($attendance)) {
+                    return $attendance->toDateString();
+                } else {
+                    return $attendance;
+                }
             })->toArray();
 
             $attendancesDays[$usuarioId] = array_values($fechasPresentes);
         }
 
-        $this->attendancesDays = isset($attendancesDays) ? $attendancesDays :  array();
+        $this->attendancesDays = isset($attendancesDays) ? $attendancesDays : array();
 
-        $this->retirements =  retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($retirement) {return $retirement->pluck('created_at')->toArray();})->toArray() : array("null" => "null");
+        $this->retirements = retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->exists() ? retirement::whereIn('student_id', $this->students->pluck('id')->toArray())->orderBy('created_at')->get()->groupBy('student_id')->map(function ($retirement) {
+            return $retirement->pluck('created_at')->toArray();
+        })->toArray() : array("null" => "null");
 
-        $this->classDays = array_values(array_diff(CarbonPeriod::create( Carbon::create(2023, 2, 27, 0), Carbon::now())->filter('isWeekday')->toArray(), $this->feriados ));
+        $this->classDays = array_values(array_diff(CarbonPeriod::create(Carbon::create(2023, 2, 27, 0), Carbon::now())->filter('isWeekday')->toArray(), $this->feriados));
 
         foreach ($this->attendancesDays as $usuarioId => $fechasPresentes) {
             $classDays = collect($this->classDays)->map(function ($attendance) {
@@ -102,7 +117,7 @@ class DateController extends Controller
             $resultados[$usuarioId] = array_values(array_diff($classDays, $fechasPresentes));
         }
 
-        $this->absents = isset($resultados) ? $resultados :  array("null" => "null");
+        $this->absents = isset($resultados) ? $resultados : array("null" => "null");
 
         $contador = Carbon::create(2023, 2, 27, 0);
 
@@ -119,7 +134,8 @@ class DateController extends Controller
         $this->clases = $clases;
     }
 
-    private function HorarioActual($shift){
+    private function HorarioActual($shift)
+    {
         switch ($shift) {
             case 'night':
                 $this->aperturaClases = Carbon::createFromTime(17, 00, 0)->format('H:i:s');
@@ -165,10 +181,11 @@ class DateController extends Controller
         }
     }
 
-    public function Tardes($id) {
+    public function Tardes($id)
+    {
         $tardes = 0;
 
-        if (array_key_exists($id,$this->attendances)) {
+        if (array_key_exists($id, $this->attendances)) {
             foreach ($this->attendances[$id] as $attendance) {
                 if ($attendance->format('H:i:s') >= $this->tardeClases && $attendance->format('H:i:s') <= $this->ausenteClases) {
                     $tardes++;
@@ -179,7 +196,8 @@ class DateController extends Controller
         return $tardes;
     } // 0.02~ ms
 
-    public function Libres() : array {
+    public function Libres(): array
+    {
         $libres = array();
 
         foreach ($this->students as $key => $student) {
@@ -191,40 +209,48 @@ class DateController extends Controller
         return $libres;
     } // 2.134 ms
 
-    public function AbsentDay() {
+    public function AbsentDay()
+    {
         $absentDay = [];
         $diaAusente = $this->DiaConMasAusentes();
 
-        foreach ($this->absents as $idUsuario => $fecha) {
-            $contador = Carbon::create(2023, 2, 27, 0);
-            $contadorAusentes = 0;
+        if (!isset($this->absents['null'])) {
+            foreach ($this->absents as $idUsuario => $fecha) {
+                $contador = Carbon::create(2023, 2, 27, 0);
+                $contadorAusentes = 0;
 
-            foreach ($fecha as $value) {
-                if (Carbon::parse($value)->dayName == $diaAusente) {
-                    $contadorAusentes++;
+                foreach ($fecha as $value) {
+                    if (Carbon::parse($value)->dayName == $diaAusente) {
+                        $contadorAusentes++;
+                    }
                 }
+
+                $absentDay[$idUsuario] = $contadorAusentes;
             }
 
-            $absentDay[$idUsuario] = $contadorAusentes;
-        }
-
-
-        if(count($absentDay) != 0){
             $prom = array_sum($absentDay) / count($absentDay);
+
+            $absentDay = array_filter($absentDay, function ($n) use ($prom) {
+                return $n >= $prom;
+            });
+
+            arsort($absentDay);
+
+            return $absentDay;
         }else{
-            return array();
+            foreach ($this->students as $usuario) {
+                $contador = Carbon::create(2023, 2, 27, 0);
+                $contadorAusentes = 0;
+
+                $absentDay[$usuario->id] = $this->clases;
+            }
+
+            return $absentDay;
         }
-
-        $absentDay = array_filter($absentDay, function ($n) use ($prom) {
-            return $n >= $prom;
-        });
-
-        arsort($absentDay);
-
-        return $absentDay;
     } // 38 ms
 
-    public function DiaConMasAusentes() {
+    public function DiaConMasAusentes()
+    {
         $contador = Carbon::create(2023, 2, 27, 0);
         $dias = [
             'Monday' => 0,
@@ -245,47 +271,55 @@ class DateController extends Controller
         return array_search(max($dias), $dias);
     } // 17 ms
 
-    public function diaDeClases(){
+    public function diaDeClases()
+    {
         if ($this->fechaActual->isWeekday() && !in_array($this->fechaActual, $this->feriados)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     } // 0.265 ms
 
-    public function horaDeClases(){
+    public function horaDeClases()
+    {
         if (Carbon::now()->format('H:i:s') >= $this->aperturaClases && Carbon::now()->format('H:i:s') <= $this->finClases) {
             return true;
-        }else{
+        } else {
             return false;
         }
     } // 0.8 ms
 
-    public function estadoDelDia(int $id){
+    public function estadoDelDia(int $id)
+    {
         if (array_key_exists(strval($id), $this->attendances)) {
             foreach ($this->attendances[$id] as $fecha) {
                 if ($fecha->isSameDay(Carbon::today())) {
-                    if ($fecha->format('H:i:s') >= $this->tardeClases && $fecha->format('H:i:s') <= $this->ausenteClases) {
+                    if ($fecha->addHours(5)->format('H:i:s') >= $this->tardeClases && $fecha->addHours(5)->format('H:i:s') <= $this->ausenteClases) {
                         return 1;
-                    }else
-                    if ($fecha->format('H:i:s') >= $this->ausenteClases && $fecha->format('H:i:s') <= $this->finClases) {
-                        return 2;
-                    }else
-                    if ($fecha->format('H:i:s') >= $this->aperturaClases && $fecha->format('H:i:s') <= $this->inicioClases) {
-                        return 3;
-                    }
+                    } else
+                        if ($fecha->addHours(5)->format('H:i:s') >= $this->ausenteClases && $fecha->addHours(5)->format('H:i:s') <= $this->finClases) {
+                            return 2;
+                        } else
+                            if ($fecha->addHours(5)->format('H:i:s') >= $this->aperturaClases && $fecha->addHours(5)->format('H:i:s') <= $this->inicioClases) {
+                                return 3;
+                            }
                 }
             }
-        }
+        } // ESTA PARA TESTEO
 
         return 4;
     } // 0.76 ms
 
-    public function AverageRetirement() {
+    public function AverageRetirement()
+    {
         $averageRetirement = [];
 
         foreach ($this->retirements as $userId => $retirements) {
-            $averageRetirement[$userId] = count($retirements);
+            if (is_string($retirements)) {
+                $averageRetirement[$userId] = 0;
+            } else {
+                $averageRetirement[$userId] = count($retirements);
+            }
         }
 
         arsort($averageRetirement, SORT_NUMERIC);
@@ -299,53 +333,88 @@ class DateController extends Controller
         return $averageRetirement;
     } // 0.04 ms
 
-    public function AverageAbsent() {
+    public function AverageAbsent()
+    {
         $averageAbsent = [];
 
-        foreach ($this->absents as $userId => $absents) {
-            $averageAbsent[$userId] = count($absents);
+        if (isset($this->absents['null'])) {
+            foreach ($this->students as $userId => $absents) {
+                if (is_string($absents)) {
+                    $averageAbsent[$userId] = 0;
+                } else {
+                    $averageAbsent[$userId] = $this->clases;
+                }
+            }
+
+            asort($averageAbsent);
+            $sortedKeys = array_keys($averageAbsent);
+
+            $selectedKeys = array_slice($sortedKeys, 0, 3);
+            $selectedKeys = array_merge($selectedKeys, array_slice($sortedKeys, -3));
+
+            $averageAbsent = array_intersect_key($averageAbsent, array_flip($selectedKeys));
+
+            return $averageAbsent;
+        } else {
+            foreach ($this->absents as $userId => $absents) {
+                if (is_string($absents)) {
+                    $averageAbsent[$userId] = 0;
+                } else {
+                    $averageAbsent[$userId] = count($absents);
+                }
+            }
+
+            asort($averageAbsent);
+            $sortedKeys = array_keys($averageAbsent);
+
+            $selectedKeys = array_slice($sortedKeys, 0, 3);
+            $selectedKeys = array_merge($selectedKeys, array_slice($sortedKeys, -3));
+
+            $averageAbsent = array_intersect_key($averageAbsent, array_flip($selectedKeys));
+
+            return $averageAbsent;
         }
-
-        asort($averageAbsent);
-        $sortedKeys = array_keys($averageAbsent);
-
-        $selectedKeys = array_slice($sortedKeys, 0, 3);
-        $selectedKeys = array_merge($selectedKeys, array_slice($sortedKeys, -3));
-
-        $averageAbsent = array_intersect_key($averageAbsent, array_flip($selectedKeys));
-
-        return $averageAbsent;
     } // 0.032 ms
 
-    public function PromedioAusentesClases() {
+    public function PromedioAusentesClases()
+    {
+        if (isset($this->absents['null'])) {
+            return $this->students->count();
+        }
         $totalAusentes = null;
         foreach ($this->absents as $absents) {
-            $totalAusentes += count($absents);
+            if (!is_string($absents)) {
+                $totalAusentes += count($absents);
+            }
         }
 
         return number_format($totalAusentes / $this->clases, 2, '.', '');
     } // 0.065 ms
 
-    public function PromedioRetirosSemana() {
+    public function PromedioRetirosSemana()
+    {
         $totalRetiros = null;
 
         foreach ($this->retirements as $retirements) {
-            $totalRetiros += count($retirements);
+            if (!is_string($retirements)) {
+                $totalRetiros += count($retirements);
+            }
         }
 
         $clasesPorSemana = $this->clases / 5;
         return number_format($totalRetiros / $clasesPorSemana / $this->clases, 3, '.', '');
     } // 0.3 ms
 
-    public function AusentesHoy($fecha, bool $ids = null) {
+    public function AusentesHoy($fecha, bool $ids = null)
+    {
         $totalAusentesHoy = 0;
 
         foreach ($this->students as $key => $student) {
             if (array_key_exists($student->id, $this->absents)) {
                 if (array_search($fecha->toDateString(), $this->absents[$student->id])) {
-                    if($ids){
+                    if ($ids) {
                         $keys[$key] = $key;
-                    }else{
+                    } else {
                         $totalAusentesHoy++;
                     }
                 }
@@ -359,7 +428,8 @@ class DateController extends Controller
         }
     } // 0.4 ms
 
-    public function PresenteAusente($id) {
+    public function PresenteAusente($id)
+    {
         $presentAusentes = 0;
 
         if (array_key_exists($id, $this->attendances)) {
@@ -373,17 +443,20 @@ class DateController extends Controller
         return $presentAusentes;
     } // 0.1 ms
 
-    public function Ausentes($id): int {
-        $ausentes = 0;
+    public function Ausentes($id): int
+    {
+        $ausentes = $this->clases;
 
-        return ((array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id]) / 2) : 0)  + $this->PresenteAusente($id) + (array_key_exists($id, $this->absents) ? count($this->absents[$id]) : 0);
+        return $ausentes - $this->Presentes($id);
     } // 0.12 ms
 
-    public function Retiradas($id) {
-        return (array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id])) : 0;
+    public function Retiradas($id)
+    {
+        return (array_key_exists($id, $this->retirements) && !is_string($this->retirements[$id])) ? (count($this->retirements[$id])) : 0;
     } // 0.030 ms
 
-    public function Presentes($id) {
-        return (array_key_exists($id, $this->attendances) ? count($this->attendances[$id]) : 0) - ((array_key_exists($id,$this->retirements)) ? (count($this->retirements[$id]) / 2) : 0) - $this->PresenteAusente($id);
+    public function Presentes($id)
+    {
+        return ((array_key_exists($id, $this->attendances) && !is_string($this->attendances[$id])) ? count($this->attendances[$id]) : 0) - ((array_key_exists($id, $this->retirements) && !is_string($this->retirements[$id])) ? (count($this->retirements[$id]) / 2) : 0) - $this->PresenteAusente($id);
     } // 0.12 ms
 }

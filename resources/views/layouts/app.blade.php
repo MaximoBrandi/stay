@@ -16,6 +16,8 @@
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <script type="text/javascript" src="instascan.min.js"></script>
 
+        <link rel="icon" type="image/x-icon" href="/logo.ico">
+
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Styles -->

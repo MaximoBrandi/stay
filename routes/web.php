@@ -17,7 +17,7 @@ use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('dashboard');
 });
 
 Route::controller(AttendanceModelController::class)->group(function () {

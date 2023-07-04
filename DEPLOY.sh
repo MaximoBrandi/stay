@@ -8,6 +8,8 @@ npm audit fix
 
 cp .env.example .env
 
+cp /examples/* /storage/app/public/
+
 php artisan key:generate
 
 nano .env

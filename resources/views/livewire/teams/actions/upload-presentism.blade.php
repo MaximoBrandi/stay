@@ -23,12 +23,16 @@
 
                 <!-- New Profile Photo Preview -->
                 <div class="mt-2" x-show="photoName" style="display: none;">
-                    <h2 class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center" x-text="photoName">
+                    <h2 x-text="photoName" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:text-gray-800 dark:hover:text-gray-100 transition ease-in-out duration-150" >
                     </h2>
                 </div>
 
                 <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.excel.click()">
                     {{ __('Select A XLSX file') }}
+                </x-secondary-button>
+
+                <x-secondary-button class="mt-2 mr-2" type="button" wire:click="download()">
+                    {{ __('Download XLSX file example') }}
                 </x-secondary-button>
 
                 <x-input-error for="photo" class="mt-2" />

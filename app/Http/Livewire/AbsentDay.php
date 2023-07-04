@@ -25,7 +25,7 @@ class AbsentDay extends LivewireDatatable
             $this->course = Auth::user()->current_team_id;
         }
 
-        $this->absentDay = (new DateController($this->course))->AbsentDay($this->course);
+        $this->absentDay = (new DateController($this->course))->AbsentDay();
 
         $this->counting = 0;
 

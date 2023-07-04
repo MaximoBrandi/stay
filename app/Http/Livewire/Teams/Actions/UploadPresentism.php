@@ -6,6 +6,7 @@ use App\Imports\AttendanceImport;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class UploadPresentism extends Component
 {
@@ -17,7 +18,10 @@ class UploadPresentism extends Component
 
         $this->emit('saved');
     }
-
+    public function download()
+    {
+        return Storage::download('public/PresentsUploadExample.xlsx');
+    }
     public function render()
     {
         return view('livewire.teams.actions.upload-presentism');

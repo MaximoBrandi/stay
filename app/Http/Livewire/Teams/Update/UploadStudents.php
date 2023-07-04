@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\User;
 use App\Models\Privileges;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UploadStudents extends Component
 {
@@ -38,12 +39,18 @@ class UploadStudents extends Component
 
             $temporaryPassword = $this->team[$key][2];
 
-            Mail::to($student)->send(new OpenAccount($temporaryPassword, $this->loginLink));
+            if (!config('app.debug')) {
+                Mail::to($student)->send(new OpenAccount($temporaryPassword, $this->loginLink));
+            }
         }
 
         $this->emit('saved');
     }
-        public function render()
+    public function download()
+    {
+        return Storage::download('public/StudentsUploadExample.xlsx');
+    }
+    public function render()
     {
         return view('livewire.teams.update.upload-students');
     }

@@ -5,11 +5,10 @@ namespace App\Http\Livewire\Teams\Actions;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Imports\CourseImport;
-use App\Mail\OpenAccount;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\User;
 use App\Models\Privileges;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UploadCourse extends Component
 {
@@ -42,8 +41,8 @@ class UploadCourse extends Component
                 $team->save();
             } else {
                 $preceptor = User::factory(1)->create()[0];
-                $preceptor->name =  $this->course[1][$key][0];
-                $preceptor->email =  $this->course[1][$key][1];
+                $preceptor->name = $this->course[1][$key][0];
+                $preceptor->email = $this->course[1][$key][1];
 
                 $preceptor->switchTeam($team = $preceptor->ownedTeams()->create([
                     'name' => $value[0],
@@ -89,6 +88,10 @@ class UploadCourse extends Component
         }
 
         $this->emit('saved');
+    }
+    public function download()
+    {
+        return Storage::download('public/CoursesUploadExample.xlsx');
     }
     public function render()
     {

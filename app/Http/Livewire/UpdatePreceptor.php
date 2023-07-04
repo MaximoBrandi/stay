@@ -28,6 +28,8 @@ class UpdatePreceptor extends Component
         $this->preceptor->switchTeam($this->team);
 
         $this->oldPreceptor->current_team_id = 0;
+
+        $this->emit('saved');
     }
     public function render()
     {

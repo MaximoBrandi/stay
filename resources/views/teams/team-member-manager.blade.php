@@ -8,43 +8,6 @@
         </div>
     @endif
 
-    @if ($team->teamInvitations->isNotEmpty() && Gate::check('addTeamMember', $team))
-        <x-section-border />
-
-        <!-- Course Member Invitations -->
-        <div class="mt-10 sm:mt-0">
-            <x-action-section>
-                <x-slot name="title">
-                    {{ __('Pending Course Invitations') }}
-                </x-slot>
-
-                <x-slot name="description">
-                    {{ __('These people have been invited to your team and have been sent an invitation email. They may join the team by accepting the email invitation.') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    <div class="space-y-6">
-                        @foreach ($team->teamInvitations as $invitation)
-                            <div class="flex items-center justify-between">
-                                <div class="text-gray-600 dark:text-gray-400">{{ $invitation->email }}</div>
-
-                                <div class="flex items-center">
-                                    @if (Gate::check('removeTeamMember', $team))
-                                        <!-- Cancel Course Invitation -->
-                                        <button class="cursor-pointer ml-6 text-sm text-red-500 focus:outline-none"
-                                                            wire:click="cancelTeamInvitation({{ $invitation->id }})">
-                                            {{ __('Cancel') }}
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-slot>
-            </x-action-section>
-        </div>
-    @endif
-
     @if ($team->users->isNotEmpty())
         <x-section-border />
 

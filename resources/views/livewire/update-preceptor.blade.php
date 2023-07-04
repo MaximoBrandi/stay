@@ -1,16 +1,16 @@
 <x-form-section submit="saveCoursePreceptor">
     <x-slot name="title">
-        {{ __('Course Name') }}
+        {{ __('Course Preceptor') }}
     </x-slot>
 
     <x-slot name="description">
-        {{ __('The team\'s name and owner information.') }}
+        {{ __('The course\'s preceptor.') }}
     </x-slot>
 
     <x-slot name="form">
         <!-- Role -->
         <div class="col-span-6 lg:col-span-4">
-            <x-label for="preceptor" value="{{ __('Preceptor '.$preceptor->email.' of '.$team->name. '') }}" />
+            <x-label for="preceptor" value="{{ __('Change Preceptor') }}" />
             <x-input-error for="preceptor" class="mt-2" />
 
             <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
@@ -45,11 +45,11 @@
     @if (Gate::check('update', $team))
         <x-slot name="actions">
             <x-action-message class="mr-3" on="saved">
-                {{ __('Saved.') }}
+                {{ __('Preceptor changed.') }}
             </x-action-message>
 
             <x-button>
-                {{ __('Save') }}
+                {{ __('Change course preceptor') }}
             </x-button>
         </x-slot>
     @endif

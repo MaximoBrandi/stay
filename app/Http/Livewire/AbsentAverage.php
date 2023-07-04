@@ -30,7 +30,7 @@ class AbsentAverage extends LivewireDatatable
 
         $this->counting = 0;
 
-        $this->averageAbsent = $dateController->AverageAbsent($this->course);
+        $this->averageAbsent = $dateController->AverageAbsent();
 
         return User::query()->whereIn('id', array_keys($this->averageAbsent));
     }

@@ -3,10 +3,12 @@
         @php
             use App\Http\Controllers\DateController;
 
-            $dateController = new DateController($course);
+            $dateController = new DateController($course->id);
         @endphp
         @if ($dashboard)
-            @foreach (\App\Models\User::where('current_team_id', $course)->where('id', '>', 6)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID)
+            @foreach (\App\Models\User::whereHas('privilege', function ($query) {
+                return $query->where('privilege_grade', '=', 1);
+            })->where('current_team_id', '=', $course->id)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID)
                 <div class="max-w-md sm:mx-auto sm:text-center hover:scale-125 transition-all" wire:click="change({{$studentID[0]}})" style="cursor: pointer">
                     @php
                         $status = $dateController->estadoDelDia($studentID[0]);
@@ -19,7 +21,9 @@
                 </div>
             @endforeach
         @else
-            @foreach (\App\Models\User::where('current_team_id', $course)->where('id', '>', 6)->pluck('id')->toArray() as $studentID)
+            @foreach (\App\Models\User::whereHas('privilege', function ($query) {
+                return $query->where('privilege_grade', '=', 1);
+            })->where('current_team_id', '=', $course->id)->pluck('id')->toArray() as $studentID)
                 @php
                     $status = $dateController->Ausentes($studentID);
                 @endphp

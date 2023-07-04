@@ -17,7 +17,7 @@ class CourseResumeDatabase extends Component
     public $dashboard;
 
     private function startUp(){
-        return $dateController = new DateController($this->course);
+        return $dateController = new DateController($this->course->id);
     }
 
     private function increment(DateController $dateController)

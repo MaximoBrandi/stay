@@ -50,6 +50,8 @@ class TeamPolicy
     {
         if($user->privilege->privilege_grade == 4){
             return true;
+        }else {
+            return false;
         }
     }
 
@@ -60,6 +62,8 @@ class TeamPolicy
     {
         if($user->privilege->privilege_grade == 4){
             return true;
+        }else {
+            return false;
         }
     }
 
@@ -70,6 +74,8 @@ class TeamPolicy
     {
         if($user->privilege->privilege_grade == 4){
             return true;
+        }else {
+            return false;
         }
     }
 
@@ -80,6 +86,8 @@ class TeamPolicy
     {
         if($user->privilege->privilege_grade == 4){
             return true;
+        }else {
+            return false;
         }
     }
 
@@ -90,6 +98,8 @@ class TeamPolicy
     {
         if($user->privilege->privilege_grade == 4){
             return true;
+        }else {
+            return false;
         }
     }
 }

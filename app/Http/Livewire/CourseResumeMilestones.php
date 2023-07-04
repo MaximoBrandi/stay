@@ -17,7 +17,7 @@ class CourseResumeMilestones extends Component
 
     public function render()
     {
-        $this->dateController = new DateController($this->course);
+        $this->dateController = new DateController($this->course->id);
 
         $this->PromedioAusentes = $this->dateController->PromedioAusentesClases();
         $this->PromedioRetiros = $this->dateController->PromedioRetirosSemana();

@@ -21,7 +21,7 @@ class DatabaseRetirements extends LivewireDatatable
 
     public function builder()
     {
-        return retirement::query()->leftJoin('users', 'users.id', 'retirements.student_id')->where('users.current_team_id', '=', $this->course);
+        return retirement::query()->leftJoin('users', 'users.id', 'retirements.student_id')->where('users.current_team_id', '=', $this->course->id);
     }
 
     public function columns()

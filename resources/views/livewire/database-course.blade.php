@@ -11,9 +11,8 @@
                   </defs>
                   <rect fill="url(#ea469ae8-e6ec-4aca-8875-fc402da4d16e)" width="52" height="24"></rect>
                 </svg>
-                <span class="relative">Course</span>
+                <span class="relative">{{$course->name}}</span>
               </span>
-              {{$course}}
             </h2>
         </div>
         <livewire:course-resume-milestones :course="$course" />
