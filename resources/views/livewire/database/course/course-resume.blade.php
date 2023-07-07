@@ -4,13 +4,15 @@
             @php
                 use App\Http\Controllers\DateController;
 
-                $dateController = new DateController($course);
+                $dateController = new DateController($course->id);
             @endphp
             @if ($dashboard)
-                @foreach (\App\Models\User::where('current_team_id', $course)->where('id', '>', 6)->pluck('id')->toArray() as $studentID)
-                    <div class="max-w-md sm:mx-auto sm:text-center hover:scale-125 transition-all" wire:click="change({{$studentID}})" style="cursor: pointer">
+                @foreach (\App\Models\User::whereHas('privilege', function ($query) {
+                    return $query->where('privilege_grade', '=', 1);
+                })->where('current_team_id', '=', $course->id)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID)
+                    <div class="max-w-md sm:mx-auto sm:text-center hover:scale-125 transition-all" wire:click="change({{$studentID[0]}})" style="cursor: pointer">
                         @php
-                            $status = $dateController->estadoDelDia($studentID);
+                            $status = $dateController->estadoDelDia($studentID[0]);
                         @endphp
                         <div class="flex items-center justify-center rounded-full @if ($status == 1) bg-red-400 @elseif($status == 2) bg-yellow-200 @elseif($status == 3) bg-green-600  @else bg-indigo-50 dark:bg-gray-400 @endif sm:mx-auto">
                             <svg class="text-deep-purple-accent-400 sm:w-12 sm:h-12" stroke="currentColor xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="person">
@@ -20,7 +22,9 @@
                     </div>
                 @endforeach
             @else
-                @foreach (\App\Models\User::where('current_team_id', $course)->where('id', '>', 6)->pluck('id')->toArray() as $studentID)
+                @foreach (\App\Models\User::whereHas('privilege', function ($query) {
+                    return $query->where('privilege_grade', '=', 1);
+                })->where('current_team_id', '=', $course->id)->pluck('id')->toArray() as $studentID)
                     @php
                         $status = $dateController->Ausentes($studentID);
                     @endphp
@@ -150,17 +154,17 @@
             </div>
         </div>
     </div>
-    <div class="col-2" id="accordionExampleAdvanced{{$course}}">
+    <div class="col-2" id="accordionExampleAdvanced{{$course->id}}">
         <div>
-            <h2 class="mb-0" id="headingOneAdvanced{{$course}}">
-                <button class="group relative flex w-full items-center rounded-t-[15px] rounded-b-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]" type="button" data-te-collapse-init data-te-target="#collapseOneAdvanced{{$course}}" aria-expanded="false" aria-controls="collapseOneAdvanced{{$course}}">
+            <h2 class="mb-0" id="headingOneAdvanced{{$course->id}}">
+                <button class="group relative flex w-full items-center rounded-t-[15px] rounded-b-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]" type="button" data-te-collapse-init data-te-target="#collapseOneAdvanced{{$course->id}}" aria-expanded="false" aria-controls="collapseOneAdvanced{{$course->id}}">
                 <span class="text-1xl sm:text-2xl">Advanced stadistics</span>
                 <span class="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /> </svg>
                 </span>
                 </button>
             </h2>
-            <div id="collapseOneAdvanced{{$course}}" class="!visible hidden" data-te-collapse-item data-te-collapse-show aria-labelledby="headingOneAdvanced{{$course}}">
+            <div id="collapseOneAdvanced{{$course->id}}" class="!visible hidden" data-te-collapse-item data-te-collapse-show aria-labelledby="headingOneAdvanced{{$course->id}}">
                 <div class="bg-white p-4 text-center">
 
                     <div class="grid justify-center mt-4 gap-8 row-gap-10 grid-cols-2">
@@ -343,7 +347,7 @@
                     <script>
 
                         // Chart
-                        const dataBar{{$course}} = {
+                        const dataBar{{$course->id}} = {
                         type: 'bar',
                         data: {
                             labels: ['January', 'February' , 'March' , 'April' , 'May' , 'June' , 'July ', 'August' , 'September' , 'October ', 'November' , 'December' ],
@@ -363,7 +367,7 @@
                             ],
                         },
                         };
-                        const dataBarWeek{{$course}} = {
+                        const dataBarWeek{{$course->id}} = {
                         type: 'bar',
                         data: {
                             labels: ['Monday', 'Tuesday' , 'Wednesday' , 'Thursday' , 'Friday' , 'Saturday' , 'Sunday '],
@@ -384,9 +388,9 @@
                         },
                         };
 
-                        new te.Chart(document.getElementById('bar-chart-{{$course}}'), dataBar{{$course}});
+                        new te.Chart(document.getElementById('bar-chart-{{$course->id}}'), dataBar{{$course->id}});
 
-                        new te.Chart(document.getElementById('bar-chart-week-{{$course}}'), dataBarWeek{{$course}});
+                        new te.Chart(document.getElementById('bar-chart-week-{{$course->id}}'), dataBarWeek{{$course->id}});
                     </script>
 
 

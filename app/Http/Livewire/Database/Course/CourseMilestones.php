@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Database;
+namespace App\Http\Livewire\Database\Course;
 
 use Livewire\Component;
 use App\Models\User;
@@ -26,6 +26,6 @@ class CourseMilestones extends Component
         $this->disengage = count($this->dateController->Libres());
         $this->diaMasAusentes = $this->dateController->DiaConMasAusentes(); // 3838 ms
 
-        return view('livewire.database.course-milestones');
+        return view('livewire.database.course.course-milestones');
     }
 }

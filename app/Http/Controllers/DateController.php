@@ -8,12 +8,10 @@ use App\Models\AttendanceModel;
 use App\Models\retirement;
 use App\Models\User;
 use App\Models\Team;
-use Illuminate\Database\Eloquent\Collection;
-use JsonSerializable;
 
 class DateController extends Controller
 {
-    private readonly int $course;
+    private $course;
     private readonly string $inicioClases;
     private readonly string $tardeClases;
     private readonly string $ausenteClases;
@@ -29,25 +27,30 @@ class DateController extends Controller
     private readonly Carbon $fechaActual;
 
     private readonly array $feriados;
-    private $attendances;
+    private readonly array $attendances;
 
-    private $attendancesDays;
+    private readonly array $attendancesDays;
 
-    private $retirements;
-    private $absents;
-    private $classDays;
+    private readonly array $retirements;
+    private readonly array $absents;
+    private readonly array $classDays;
 
     private readonly int $clases;
     private $students;
     private $prom;
 
-    public function __construct($course, bool $datatable = null)
+    public function __construct($course)
     {
         // Testing time
         $knownDate = Carbon::create(Carbon::now()->year, Carbon::now()->month, Carbon::now()->day, 18, 20);
         Carbon::setTestNow($knownDate);
 
-        $this->course = $course;
+        if (is_int($course)) {
+            $this->course = $course;
+        } else {
+            $this->course = $course->id;
+        }
+
 
         $this->HorarioActual(Team::find($this->course)->pluck('shift')->first());
 
@@ -412,7 +415,7 @@ class DateController extends Controller
         $totalAusentesHoy = 0;
 
         foreach ($this->students as $key => $student) {
-            if ($this->absents->has($student->id)) {
+            if (array_key_exists($student->id, $this->absents)) {
                 if (array_search($fecha->toDateString(), $this->absents[$student->id])) {
                     if ($ids) {
                         $keys[$key] = $key;
@@ -434,7 +437,7 @@ class DateController extends Controller
     {
         $presentAusentes = 0;
 
-        if ($this->attendances->has($id)) {
+        if (array_key_exists($id, $this->attendances)) {
             foreach ($this->attendances[$id] as $attendance) {
                 if ($attendance->format('H:i:s') >= $this->ausenteClases && $attendance->format('H:i:s') <= $this->finClases) {
                     $presentAusentes++;

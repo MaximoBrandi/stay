@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Database;
+namespace App\Http\Livewire\Database\Course;
 
 use Livewire\Component;
 use App\Http\Controllers\DateController;
@@ -42,6 +42,6 @@ class CourseResume extends Component
             $this->increment();
         }
 
-        return view('livewire.database.course-resume');
+        return view('livewire.database.course.course-resume');
     }
 }

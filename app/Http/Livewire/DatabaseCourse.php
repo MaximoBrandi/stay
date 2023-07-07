@@ -8,7 +8,8 @@ class DatabaseCourse extends Component
 {
     public $course;
     public $initialized = false;
-    public function initialize(){
+    public function initialize()
+    {
         $this->initialized = true;
     }
     public function render()
@@ -16,8 +17,8 @@ class DatabaseCourse extends Component
         return view('livewire.database-course');
     }
     public function handleClick()
-{
-    // This will prevent the component from reinitializing
-    $this->emit('click.prevent');
-}
+    {
+        // This will prevent the component from reinitializing
+        $this->emit('click.prevent');
+    }
 }
