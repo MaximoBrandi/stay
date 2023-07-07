@@ -8,6 +8,8 @@ use App\Models\AttendanceModel;
 use App\Models\retirement;
 use App\Models\User;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Collection;
+use JsonSerializable;
 
 class DateController extends Controller
 {
@@ -27,19 +29,19 @@ class DateController extends Controller
     private readonly Carbon $fechaActual;
 
     private readonly array $feriados;
-    private readonly array $attendances;
+    private $attendances;
 
-    private readonly array $attendancesDays;
+    private $attendancesDays;
 
-    private readonly array $retirements;
-    private readonly array $absents;
-    private readonly array $classDays;
+    private $retirements;
+    private $absents;
+    private $classDays;
 
     private readonly int $clases;
     private $students;
     private $prom;
 
-    public function __construct($course)
+    public function __construct($course, bool $datatable = null)
     {
         // Testing time
         $knownDate = Carbon::create(Carbon::now()->year, Carbon::now()->month, Carbon::now()->day, 18, 20);
@@ -410,7 +412,7 @@ class DateController extends Controller
         $totalAusentesHoy = 0;
 
         foreach ($this->students as $key => $student) {
-            if (array_key_exists($student->id, $this->absents)) {
+            if ($this->absents->has($student->id)) {
                 if (array_search($fecha->toDateString(), $this->absents[$student->id])) {
                     if ($ids) {
                         $keys[$key] = $key;
@@ -432,7 +434,7 @@ class DateController extends Controller
     {
         $presentAusentes = 0;
 
-        if (array_key_exists($id, $this->attendances)) {
+        if ($this->attendances->has($id)) {
             foreach ($this->attendances[$id] as $attendance) {
                 if ($attendance->format('H:i:s') >= $this->ausenteClases && $attendance->format('H:i:s') <= $this->finClases) {
                     $presentAusentes++;

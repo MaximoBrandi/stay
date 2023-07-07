@@ -1,29 +1,31 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Database;
 
 use Livewire\Component;
 use App\Models\User;
 use App\Http\Controllers\DateController;
+use Carbon\Carbon;
 
-class CourseResumeMilestones extends Component
+class CourseMilestones extends Component
 {
     public $course;
     public $disengage = 0;
     public $PromedioAusentes = 0;
     public $PromedioRetiros = 0;
     public $diaMasAusentes;
-    private DateController $dateController;
-
+    private $dateController;
     public function render()
     {
-        $this->dateController = new DateController($this->course->id);
+        if (!($this->dateController instanceof DateController)) {
+            $this->dateController = new DateController($this->course);
+        }
 
         $this->PromedioAusentes = $this->dateController->PromedioAusentesClases();
         $this->PromedioRetiros = $this->dateController->PromedioRetirosSemana();
         $this->disengage = count($this->dateController->Libres());
         $this->diaMasAusentes = $this->dateController->DiaConMasAusentes(); // 3838 ms
 
-        return view('livewire.course-resume-milestones');
+        return view('livewire.database.course-milestones');
     }
 }

@@ -24,7 +24,7 @@ class DisengageStudents extends LivewireDatatable
             $this->course = Auth::user()->current_team_id;
         }
 
-        $this->dateController = new DateController($this->course);
+        $this->dateController = new DateController($this->course, true);
 
         return User::query()->whereIn('id', $this->dateController->Libres());
     }
