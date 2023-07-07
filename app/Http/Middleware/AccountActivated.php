@@ -16,7 +16,7 @@ class AccountActivated
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->created_at == Auth::user()->updated_at) {
+        if (Auth::user()->created_at == Auth::user()->updated_at && config('app.debug') == false) {
             return redirect()->route('activate-account');
         }
 

@@ -37,7 +37,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
     '2fa-verified',
-    'activated'
+    'activated',
+    'web'
 ])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');

@@ -50,11 +50,11 @@
                         </x-nav-link>
                     </div>
                 @elseif((Auth::user()->privilege->privilege_grade) == 4)
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    {{-- <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                    </div>
+                    </div> --}}
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link href="{{ route('database') }}" :active="request()->routeIs('database')">
                             {{ __('Database') }}
@@ -81,6 +81,10 @@
                 @elseif((Auth::user()->privilege->privilege_grade) == 2)
                     <x-nav-link href="javascript:void(0)">
                         {{ __('Scan station') }}
+                    </x-nav-link>
+                @elseif((Auth::user()->privilege->privilege_grade) == 4)
+                    <x-nav-link href="javascript:void(0)">
+                        {{ __('Accountable') }}
                     </x-nav-link>
                 @endif
                 <!-- Teams Dropdown -->
