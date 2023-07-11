@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hierarchies', function (Blueprint $table) {
+        Schema::create('course_schedules', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->string('role');
+            $table->integer('team_id');
+            $table->string('shift');
+            $table->dateTime('openTime');
+            $table->dateTime('startTime');
+            $table->dateTime('lateTime');
+            $table->dateTime('absentTime');
+            $table->dateTime('closeTime');
             $table->timestamps();
         });
     }
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hierarchies');
+        Schema::dropIfExists('course_schedules');
     }
 };

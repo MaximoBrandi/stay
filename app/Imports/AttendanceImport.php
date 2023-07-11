@@ -15,10 +15,12 @@ class AttendanceImport implements ToModel
     */
     public function model(array $row)
     {
-        return new AttendanceModel([
-            'created_at' => Carbon::parse($row[1].' ' .$row[2]),
-            'updated_at' => Carbon::parse($row[1].' ' .$row[2]),
-            'student_id' => $row[0],
+        AttendanceModel::Create([
+            'created_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC'))
+            ,
+            'updated_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC'))
+            ,
+            'student_id' => $row[1],
         ]);
     }
 }

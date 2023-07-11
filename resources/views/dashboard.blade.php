@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+    @if (Auth::user()->privilege->privilege_grade !== 2)
+        <x-slot name="header">
+            <div class="shrink-0 flex items-center">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ __('Dashboard') }}
+                </h2>
+            </div>
+        </x-slot>
+    @endif
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -60,6 +64,8 @@
                         <livewire:courses />
                     </div>
                 </div>
+            @elseif (Auth::user()->privilege->privilege_grade == 2)
+                <livewire:scan.attendance />
             @endif
         </div>
     </div>

@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceModelController;
 use App\Http\Controllers\RetirementController;
 use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Team;
+use App\Models\User;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +40,7 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'broken-things',
     '2fa-verified',
     'activated',
     'web'
@@ -56,7 +61,23 @@ Route::middleware([
         return view('database');
     })->name('database');
 
-    Route::get('/actions', function () {
-        return view('actions');
+    Route::get('/actions/{selected?}', function (string $selected = 'caca') {
+        return view('actions', ['selected' => $selected]);
     })->name('actions');
+
+    Route::get('/startup', function () {
+        return view('startup');
+    })->name('fillDatabase');
+
+    Route::get('/update/team/{id?}', function (int $id) {
+        if (User::find(Auth::id())->ownsTeam(Team::find($id))) {
+            $pistacho = User::find(Auth::id());
+            $pistacho->current_team_id = $id;
+            $pistacho->save();
+
+            return redirect('dashboard');
+        }
+
+        return redirect()->back();
+    })->name('update-team');
 });

@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         '2fa-verified' => \App\Http\Middleware\Verify2FA::class,
         'activated' => \App\Http\Middleware\AccountActivated::class,
+        'broken-things' => \App\Http\Middleware\BrokenThings::class,
     ];
 }

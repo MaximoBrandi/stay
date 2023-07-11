@@ -3,15 +3,19 @@
 namespace App\Imports;
 
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Concerns\WithConditionalSheets;
 
 class CourseImport implements WithMultipleSheets
 {
-    public function sheets(): array
+    use WithConditionalSheets;
+    public function conditionalSheets(): array
     {
         return [
-            0 => new CourseFirstSheetImport(),
-            1 => new CourseSecondSheetImport(),
-            2 => new CourseThirdSheetImport(),
+            'Preceptors' => new CourseFirstSheetImport(),
+            'Courses' => new CourseSecondSheetImport(),
+            'Students' => new CourseThirdSheetImport(),
+            'Attendances' => new CourseFourthSheetImport(),
+            'Retirements' => new CourseFifthSheetImport(),
         ];
     }
 }

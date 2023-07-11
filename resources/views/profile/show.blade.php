@@ -1,4 +1,4 @@
-@if (Auth::user()->created_at == Auth::user()->updated_at)
+@if (config('app.debug') == false && Auth::user()->created_at == Auth::user()->updated_at)
     <x-app-layout>
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
@@ -21,9 +21,11 @@
 @else
     <x-app-layout>
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Profile') }}
-            </h2>
+            <div class="shrink-0 flex items-center">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ __('Profile') }}
+                </h2>
+            </div>
         </x-slot>
 
         <div>

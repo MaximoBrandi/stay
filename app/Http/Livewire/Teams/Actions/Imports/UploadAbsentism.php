@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Teams\Actions;
+namespace App\Http\Livewire\Teams\Actions\Imports;
 
 use App\Imports\RetirementImport;
 use Livewire\Component;
@@ -24,6 +24,6 @@ class UploadAbsentism extends Component
     }
     public function render()
     {
-        return view('livewire.teams.actions.upload-absentism');
+        return view('livewire.teams.actions.imports.upload-absentism');
     }
 }
