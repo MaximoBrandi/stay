@@ -14,8 +14,8 @@ class AttendanceExport implements FromQuery, WithTitle
 {
     use Exportable;
 
-    protected $course;
-    protected $ids;
+    protected array $course;
+    protected array $ids;
 
     public function forCourse(array $course)
     {

@@ -16,6 +16,7 @@ class CourseImport implements WithMultipleSheets
             'Students' => new CourseThirdSheetImport(),
             'Attendances' => new CourseFourthSheetImport(),
             'Retirements' => new CourseFifthSheetImport(),
+            'Schedules' => new CourseSixthSheetImport(),
         ];
     }
 }

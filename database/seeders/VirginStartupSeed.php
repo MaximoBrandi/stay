@@ -16,6 +16,7 @@ class VirginStartupSeed extends Seeder
     {
         $accountant = User::factory(1)->create()->first();
 
+        $accountant->id = 1;
         $accountant->name = 'Admin';
         $accountant->email = 'admin@admin.com';
         $accountant->password = bcrypt('1234');

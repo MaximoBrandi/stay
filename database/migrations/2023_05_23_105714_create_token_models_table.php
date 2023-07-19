@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('token_models', function (Blueprint $table) {
             $table->id();
-            $table->integer('student_id');
-            $table->string('token');
+            $table->integer('student_id')->required();
+            $table->string('token')->required();
             $table->timestamps();
             $table->softDeletes();
         });

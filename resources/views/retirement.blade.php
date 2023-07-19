@@ -9,8 +9,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <script type="text/javascript" src="instascan.min.js"></script>
             @if (Auth::user()->privilege->privilege_grade >= 2)
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div id="pistachazo" class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex mt-8 mb-8 justify-center">
                         <video id="previewVideoCam"></video>
                     </div>
@@ -28,7 +29,9 @@
                     });
                     Instascan.Camera.getCameras().then(function (cameras) {
                         if (cameras.length > 0) {
-                        scanner.start(cameras[0]);
+                        cameras.forEach(element => {
+                            scanner.start(element);
+                        });
                         } else {
                         console.error('No cameras found.');
                         }

@@ -9,7 +9,7 @@ class CourseExport implements WithMultipleSheets
 {
     use Exportable;
 
-    protected $courses;
+    protected array $courses;
 
     public function __construct(array $courses)
     {
@@ -28,6 +28,7 @@ class CourseExport implements WithMultipleSheets
         $sheets[] = (new UsersExport)->forPrivilege(3);
         $sheets[] = (new AttendanceExport)->forCourse($this->courses);
         $sheets[] = (new RetirementExport)->forCourse($this->courses);
+        $sheets[] = (new SchedulesExport)->forCourse($this->courses);
 
         return $sheets;
     }

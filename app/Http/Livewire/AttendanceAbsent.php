@@ -19,7 +19,7 @@ class AttendanceAbsent extends LivewireDatatable
 
     public function builder()
     {
-        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', ((new DateController(Auth::user()->current_team_id))->AusentesHoy(Carbon::today(), true)))->where('users.id', '>', '6');
+        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->whereNotIn('id', ((new DateController(Auth::user()->currentTeam))->AusentesHoy(Carbon::today(), true)))->where('users.id', '>', '6');
     }
 
     public function columns()

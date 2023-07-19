@@ -4,7 +4,7 @@
             <div class="hystmodal__window" role="dialog" aria-modal="true">
                 <button data-hystclose class="hystmodal__close">Закрыть</button>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
-                    <livewire:disengage-students-component :course="$course->id"/>
+                    <livewire:disengage-students-component :course="$course"/>
                 </div>
             </div>
         </div>
@@ -14,7 +14,7 @@
             <div class="hystmodal__window" role="dialog" aria-modal="true">
                 <button data-hystclose class="hystmodal__close">Закрыть</button>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
-                    <livewire:absent-day-component :course="$course->id"/>
+                    <livewire:absent-day-component :course="$course"/>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <div class="hystmodal__window" role="dialog" aria-modal="true">
                 <button data-hystclose class="hystmodal__close">Закрыть</button>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
-                    <livewire:retirement-average-component :course="$course->id"/>
+                    <livewire:retirement-average-component :course="$course"/>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="hystmodal__window" role="dialog" aria-modal="true">
                 <button data-hystclose class="hystmodal__close">Закрыть</button>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
-                    <livewire:absent-average-component :course="$course->id"/>
+                    <livewire:absent-average-component :course="$course"/>
                 </div>
             </div>
         </div>

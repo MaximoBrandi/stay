@@ -15,15 +15,15 @@
                 {{ __('Export') }}
             </x-nav-link>
         </div>
+        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+            <x-nav-link href="{{ route('actions').'/scan-points' }}" :active="$selected == 'scan-points'">
+                {{ __('Scan Points') }}
+            </x-nav-link>
+        </div>
         @if (config('app.debug') == true)
         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
             <x-nav-link href="{{ route('actions').'/reports' }}" :active="$selected == 'reports'">
                 {{ __('Reports') }}
-            </x-nav-link>
-        </div>
-        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-            <x-nav-link href="{{ route('actions').'/scan-points' }}" :active="$selected == 'scan-points'">
-                {{ __('Scan Points') }}
             </x-nav-link>
         </div>
         @endif
@@ -61,6 +61,13 @@
                 <div class="mt-10 sm:mt-0">
                     <livewire:teams.actions.exports.download-retirements />
                 </div>
+
+                <x-section-border />
+
+                <!-- Add Course Member -->
+                <div class="mt-10 sm:mt-0">
+                    <livewire:teams.actions.exports.download-holidays />
+                </div>
             @elseif($selected == 'import')
                 <!-- Add Course Member -->
                 <div class="mt-10 sm:mt-0">
@@ -78,6 +85,13 @@
                 <!-- Add Course Member -->
                 <div class="mt-10 sm:mt-0">
                     <livewire:teams.actions.imports.upload-absentism />
+                </div>
+
+                <x-section-border />
+
+                <!-- Add Course Member -->
+                <div class="mt-10 sm:mt-0">
+                    <livewire:teams.actions.imports.upload-holidays />
                 </div>
             @elseif($selected == 'reports' && config('app.debug') == true)
                 <!-- Add Course Member -->
@@ -97,7 +111,7 @@
                 <div class="mt-10 sm:mt-0">
                     <livewire:teams.actions.reports.preceptor-report />
                 </div>
-            @elseif($selected == 'scan-points' && config('app.debug') == true)
+            @elseif($selected == 'scan-points')
                 <!-- Add Course Member -->
                 <div class="mt-10 sm:mt-0">
                     <livewire:teams.actions.scan.scan-points-list />

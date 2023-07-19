@@ -12,9 +12,9 @@ class UsersExport implements FromQuery, WithTitle
 {
     use Exportable;
 
-    public $course;
-    public $ids;
-    public $privilege;
+    public array $course;
+    public array $ids;
+    public int $privilege;
 
     public function forPrivilege(int $privilege)
     {

@@ -12,8 +12,8 @@ class RetirementExport implements FromQuery, WithTitle
 {
     use Exportable;
 
-    public $course;
-    protected $ids;
+    public array $course;
+    protected array $ids;
 
     public function forCourse(array $course)
     {

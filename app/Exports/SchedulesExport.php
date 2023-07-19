@@ -2,17 +2,16 @@
 
 namespace App\Exports;
 
-use App\Models\Team;
+use App\Models\CourseSchedule;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class TeamExport implements FromQuery, WithTitle
+class SchedulesExport implements FromQuery, WithTitle
 {
     use Exportable;
 
-    protected array $course;
-    protected array $ids;
+    public array $course;
 
     public function forCourse(array $course)
     {
@@ -23,7 +22,7 @@ class TeamExport implements FromQuery, WithTitle
 
     public function query()
     {
-        return Team::query()->whereIn('id', $this->course);
+        return CourseSchedule::query()->whereIn('team_id', $this->course);
     }
 
     /**
@@ -31,6 +30,6 @@ class TeamExport implements FromQuery, WithTitle
      */
     public function title(): string
     {
-        return 'Courses';
+        return 'Schedules';
     }
 }

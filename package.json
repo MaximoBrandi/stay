@@ -18,6 +18,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "instascan": "^1.0.0",
         "tw-elements": "^1.0.0-beta2"
     }
 }

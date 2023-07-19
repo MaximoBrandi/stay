@@ -3,15 +3,16 @@
         @php
             use App\Http\Controllers\DateController;
 
-            $dateController = new DateController($course->id);
+            $dateController = new DateController($course);
+
         @endphp
         @if ($dashboard)
             @foreach (\App\Models\User::whereHas('privilege', function ($query) {
                 return $query->where('privilege_grade', '=', 1);
-            })->where('current_team_id', '=', $course->id)->get('id')->map(function($i) {return array_values($i->only('id'));})->toArray() as $studentID)
-                <div class="max-w-md sm:mx-auto sm:text-center hover:scale-125 transition-all" wire:click="change({{$studentID[0]}})" style="cursor: pointer">
+            })->where('current_team_id', '=', $course->id)->pluck('id')->toArray() as $studentID)
+                <div class="max-w-md sm:mx-auto sm:text-center hover:scale-125 transition-all" wire:click="change({{$studentID}})" style="cursor: pointer">
                     @php
-                        $status = $dateController->estadoDelDia($studentID[0]);
+                        $status = $dateController->estadoDelDia($studentID);
                     @endphp
                     <div class="flex items-center justify-center rounded-full @if ($status == 1) bg-red-400 @elseif($status == 2) bg-yellow-200 @elseif($status == 3) bg-green-600  @else bg-indigo-50 dark:bg-gray-400 @endif sm:mx-auto">
                         <svg class="text-deep-purple-accent-400 sm:w-12 sm:h-12" stroke="currentColor xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="person">

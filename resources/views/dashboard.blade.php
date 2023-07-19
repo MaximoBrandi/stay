@@ -61,7 +61,7 @@
                 </div>
                 <div class="bg-white dark:bg-gray-800 mt-8 overflow-hidden shadow-xl sm:rounded-lg">
                     <div>
-                        <livewire:courses />
+                        <livewire:courses :course="Auth::user()->currentTeam"/>
                     </div>
                 </div>
             @elseif (Auth::user()->privilege->privilege_grade == 2)

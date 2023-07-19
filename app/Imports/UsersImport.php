@@ -26,43 +26,47 @@ class UsersImport implements ToModel
      */
     public function model(array $row)
     {
-        static $password;
+        if ($row[1] !== null) {
+            static $password;
 
-        $student = User::factory(1)->create()->first();
+            $student = User::factory(1)->create()->first();
 
-        $student->name = $row[1];
-        $student->email = $row[2];
-        if (!config('app.debug')) {
-            $password = Str::random(10);
+            $student->name = $row[1];
+            $student->email = $row[2];
+            if (!config('app.debug')) {
+                $password = Str::random(10);
 
-            $student->password = bcrypt($password);
-        }else{
-            $student->password = bcrypt('12341234');
-        }
+                $student->password = bcrypt($password);
+            }else{
+                $student->password = bcrypt('12341234');
+            }
 
-        if ($this->privilege == 2) {
-            $student->current_team_id = 0;
+            if ($this->privilege == 2) {
+                $student->current_team_id = 0;
 
-            $student->save();
+                $student->save();
+            } else {
+                $student->current_team_id = $row[5];
+
+                $student->save();
+
+                Team::find($row[5])->users()->attach($student, ['role' => 'student']);
+            }
+
+            $privilege = new Privileges;
+            $privilege->user_id = $student->id;
+            if(isset($this->privilege)){
+                $privilege->privilege_grade = $this->privilege;
+            }else{
+                $privilege->privilege_grade = 1;
+            }
+            $privilege->save();
+
+            if (!config('app.debug')) {
+                Mail::to($student)->send(new OpenAccount($password, $this->loginLink));
+            }
         } else {
-            $student->current_team_id = $row[5];
-
-            $student->save();
-
-            Team::find($row[5])->users()->attach($student, ['role' => 'student']);
-        }
-
-        $privilege = new Privileges;
-        $privilege->user_id = $student->id;
-        if(isset($this->privilege)){
-            $privilege->privilege_grade = $this->privilege;
-        }else{
-            $privilege->privilege_grade = 1;
-        }
-        $privilege->save();
-
-        if (!config('app.debug')) {
-            Mail::to($student)->send(new OpenAccount($password, $this->loginLink));
+            return null;
         }
     }
 }

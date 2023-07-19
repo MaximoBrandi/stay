@@ -27,6 +27,8 @@ class UploadCourse extends Component
 
         Excel::import($courseImport->onlySheets('Retirements'), $this->excel);
 
+        Excel::import($courseImport->onlySheets('Schedules'), $this->excel);
+
         $this->emit('saved');
     }
     public function download()

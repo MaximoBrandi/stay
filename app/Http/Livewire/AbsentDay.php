@@ -10,19 +10,20 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use App\Http\Controllers\DateController;
+use App\Models\Team;
 
 class AbsentDay extends LivewireDatatable
 {
     public $model = User::class;
-    public $course;
-    public $counting = 0;
-    private $absentDay;
+    public Team $course;
+    public int $counting = 0;
+    private array $absentDay;
     public $exportable = true;
 
     public function builder()
     {
         if (Auth::user()->privilege->privilege_grade == 3) {
-            $this->course = Auth::user()->current_team_id;
+            $this->course = Auth::user()->currentTeam;
         }
 
         $this->absentDay = (new DateController($this->course))->AbsentDay();

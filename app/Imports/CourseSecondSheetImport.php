@@ -3,12 +3,8 @@
 namespace App\Imports;
 
 use App\Models\User;
-use App\Models\Privileges;
-use App\Models\Team;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OpenAccount;
-use Illuminate\Support\Str;
 
 class CourseSecondSheetImport implements ToModel
 {
@@ -20,17 +16,23 @@ class CourseSecondSheetImport implements ToModel
      */
     public function model(array $row)
     {
-        $preceptor = User::find($row[1]);
+        if ($row[3] !== null) {
+            $preceptor = User::find($row[1]);
 
-        $preceptor->switchTeam($team = $preceptor->ownedTeams()->create([
-            'name' => $row[2],
-            'personal_team' => false,
-        ]));
+            $preceptor->switchTeam($team = $preceptor->ownedTeams()->create([
+                'name' => $row[2],
+                'personal_team' => false,
+            ]));
 
-        $team->shift = $row[3];
-        $team->save();
+            $team->startCycle = Carbon::parse($row[5])->setTimezone(env('APP_TIMEZONE', 'UTC'));
+            $team->endCycle = Carbon::parse($row[6])->setTimezone(env('APP_TIMEZONE', 'UTC'));
+            $team->shift = $row[3];
+            $team->save();
 
-        $preceptor->current_team_id = $team->id;
-        $preceptor->save();
+            $preceptor->current_team_id = $team->id;
+            $preceptor->save();
+        } else {
+            return null;
+        }
     }
 }

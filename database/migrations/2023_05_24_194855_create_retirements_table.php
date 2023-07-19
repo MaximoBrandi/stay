@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('retirements', function (Blueprint $table) {
             $table->id();
-            $table->string('student_id');
+            $table->string('student_id')->required();
             $table->timestamps();
         });
     }

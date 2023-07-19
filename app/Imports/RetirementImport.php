@@ -15,10 +15,14 @@ class RetirementImport implements ToModel
     */
     public function model(array $row)
     {
-        retirement::Create([
-            'created_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC')),
-            'updated_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC')),
-            'student_id' => $row[1],
-        ]);
+        if ($row[2] !== null) {
+            retirement::Create([
+                'created_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC')),
+                'updated_at' => Carbon::parse($row[2])->setTimezone(env('APP_TIMEZONE', 'UTC')),
+                'student_id' => $row[1],
+            ]);
+        } else {
+            return null;
+        }
     }
 }

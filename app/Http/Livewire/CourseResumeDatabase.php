@@ -3,21 +3,26 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use App\Models\Team;
 use App\Http\Controllers\DateController;
 
 class CourseResumeDatabase extends Component
 {
-    public $course;
-    public $alumnoID;
-    public $ausentes;
-    public $retiradas;
-    public $presentes;
-    public $presenteAusente;
-    public $tardes;
-    public $dashboard;
+    public Team $course;
+    public int $alumnoID;
+    public int $ausentes;
+    public int $retiradas;
+    public int $presentes;
+    public int $presenteAusente;
+    public int $tardes;
+    public bool $dashboard;
 
     private function startUp(){
-        return $dateController = new DateController($this->course->id);
+        if (request()->routeIs('dashboard')) {
+            $this->dashboard = true;
+        }
+
+        return new DateController($this->course);
     }
 
     private function increment(DateController $dateController)

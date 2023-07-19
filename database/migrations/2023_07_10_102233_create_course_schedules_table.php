@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('course_schedules', function (Blueprint $table) {
             $table->id();
-            $table->integer('team_id');
-            $table->string('shift');
-            $table->dateTime('openTime');
-            $table->dateTime('startTime');
-            $table->dateTime('lateTime');
-            $table->dateTime('absentTime');
-            $table->dateTime('closeTime');
+            $table->integer('team_id')->required();
+            $table->string('shift')->required();
+            $table->time('openTime')->required();
+            $table->time('startTime')->required();
+            $table->time('lateTime')->required();
+            $table->time('absentTime')->required();
+            $table->time('closeTime')->required();
             $table->timestamps();
         });
     }

@@ -21,29 +21,33 @@ class CourseFirstSheetImport implements ToModel
      */
     public function model(array $row)
     {
-        static $password;
+        if ($row[1] !== null) {
+            static $password;
 
-        $preceptor = User::factory(1)->create()->first();
+            $preceptor = User::factory(1)->create()->first();
 
 
-        $preceptor->name = $row[1];
-        $preceptor->email = $row[2];
-        if (!config('app.debug')) {
-            $password = Str::random(10);
+            $preceptor->name = $row[1];
+            $preceptor->email = $row[2];
+            if (!config('app.debug')) {
+                $password = Str::random(10);
 
-            $preceptor->password = bcrypt($password);
-        }else{
-            $preceptor->password = bcrypt('12341234');
-        }
-        $preceptor->save();
+                $preceptor->password = bcrypt($password);
+            }else{
+                $preceptor->password = bcrypt('12341234');
+            }
+            $preceptor->save();
 
-        $privilege = new Privileges;
-        $privilege->user_id = $preceptor->id;
-        $privilege->privilege_grade = 3;
-        $privilege->save();
+            $privilege = new Privileges;
+            $privilege->user_id = $preceptor->id;
+            $privilege->privilege_grade = 3;
+            $privilege->save();
 
-        if (!config('app.debug')) {
-            Mail::to($preceptor)->send(new OpenAccount($password, $this->loginLink));
+            if (!config('app.debug')) {
+                Mail::to($preceptor)->send(new OpenAccount($password, $this->loginLink));
+            }
+        } else {
+            return null;
         }
     }
 }
