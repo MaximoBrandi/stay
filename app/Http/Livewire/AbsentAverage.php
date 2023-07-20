@@ -10,22 +10,23 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use App\Http\Controllers\DateController;
+use App\Models\Team;
 use Illuminate\Support\Benchmark;
 
 class AbsentAverage extends LivewireDatatable
 {
     public $model = User::class;
-    public $course;
-    public $counting = 0;
+    public Team $course;
+    public int $counting = 0;
     public $exportable = true;
-    private $averageAbsent;
+    private array $averageAbsent;
 
     public function builder()
     {
         $dateController = new DateController($this->course, true);
 
         if (Auth::user()->privilege->privilege_grade == 3) {
-            $this->course = Auth::user()->current_team_id;
+            $this->course = Auth::user()->currentTeam;
         }
 
         $this->counting = 0;

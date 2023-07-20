@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Http\Livewire\Teams\Actions;
+namespace App\Http\Livewire\Teams\Actions\Imports;
 
-use App\Imports\RetirementImport;
+use App\Imports\HolidayImport;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
-class UploadAbsentism extends Component
+class UploadHolidays extends Component
 {
     use WithFileUploads;
     public $excel;
     public function save()
     {
-        Excel::import(new RetirementImport, $this->excel);
+        Excel::import(new HolidayImport, $this->excel);
 
         $this->emit('saved');
     }
     public function download()
     {
-        return Storage::download('public/RetirementsUploadExample.xlsx');
+        return Storage::download('public/HolidaysUploadExample.xlsx');
     }
     public function render()
     {
-        return view('livewire.teams.actions.upload-absentism');
+        return view('livewire.teams.actions.imports.upload-holidays');
     }
 }

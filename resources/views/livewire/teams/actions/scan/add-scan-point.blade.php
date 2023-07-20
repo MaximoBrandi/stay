@@ -1,11 +1,11 @@
 <div>
     <x-form-section submit="save">
         <x-slot name="title">
-            {{ __('Upload Course') }}
+            {{ __('Add scan point') }}
         </x-slot>
 
         <x-slot name="description">
-            {{ __('Upload a complete course from a excel file.') }}
+            {{ __('Add scan point importing from a excel file.') }}
         </x-slot>
 
         <x-slot name="form">
@@ -19,7 +19,7 @@
                                     photoName = $refs.excel.files[0].name;
                             " />
 
-                <x-label for="excel" value="{{ __('Upload Course') }}" />
+                <x-label for="excel" value="{{ __('Import scan point') }}" />
 
                 <!-- New Profile Photo Preview -->
                 <div class="mt-2" x-show="photoName" style="display: none;">
@@ -32,21 +32,19 @@
                 </x-secondary-button>
 
                 <x-secondary-button class="mt-2 mr-2" type="button" wire:click="download()">
-                    {{ __('Download XLSX file example') }}
+                    {{ __('Download import example') }}
                 </x-secondary-button>
-
-                <x-input-error for="photo" class="mt-2" />
 
             </div>
         </x-slot>
 
         <x-slot name="actions">
             <x-action-message class="mr-3" on="saved">
-                {{ __('Loaded.') }}
+                {{ __('Imported.') }}
             </x-action-message>
 
             <x-button wire:loading.attr="disabled" wire:target="excel">
-                {{ __('Load') }}
+                {{ __('Import') }}
             </x-button>
         </x-slot>
     </x-form-section>

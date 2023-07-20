@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class retirement extends Model
 {
@@ -14,4 +15,9 @@ class retirement extends Model
     ];
 
     use HasFactory;
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
 }

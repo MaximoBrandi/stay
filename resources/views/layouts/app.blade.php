@@ -14,7 +14,6 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <script type="text/javascript" src="instascan.min.js"></script>
 
         <link rel="icon" type="image/x-icon" href="/logo.ico">
 
@@ -28,16 +27,22 @@
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @if (config('app.debug') == true || Auth::user()->created_at != Auth::user()->updated_at && Auth::user()->two_factor_confirmed_at != null)
-                @livewire('navigation-menu')
+                @if (App\Models\Team::count() !== 0 && Auth::user()->privilege->privilege_grade !== 2)
+                    @livewire('navigation-menu')
+                @endif
             @endif
 
             <!-- Page Heading -->
             @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <header class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex">
+                            {{ $header }}
+                        </div>
                     </div>
-                </header>
+                </div>
+            </header>
             @endif
 
             <!-- Page Content -->

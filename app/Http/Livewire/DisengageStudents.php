@@ -10,18 +10,19 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use App\Http\Controllers\DateController;
+use App\Models\Team;
 
 class DisengageStudents extends LivewireDatatable
 {
     public $model = User::class;
-    public $course;
+    public Team $course;
     public $exportable = true;
-    private $dateController;
+    private DateController $dateController;
 
     public function builder()
     {
         if (Auth::user()->privilege->privilege_grade == 3) {
-            $this->course = Auth::user()->current_team_id;
+            $this->course = Auth::user()->currentTeam;
         }
 
         $this->dateController = new DateController($this->course, true);

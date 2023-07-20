@@ -1,8 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Database') }}
-        </h2>
+        <div class="shrink-0 flex items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Database') }}
+            </h2>
+        </div>
     </x-slot>
 
     <link rel="stylesheet" href="vendor/hystModal/hystmodal.min.css">
@@ -135,5 +137,4 @@
                 </div>
             </div>
     </div>
-        <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
 </x-app-layout>

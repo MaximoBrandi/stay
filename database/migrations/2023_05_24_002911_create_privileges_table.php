@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('privileges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->index();
-            $table->integer('privilege_grade');
+            $table->foreignId('user_id')->index()->required();
+            $table->integer('privilege_grade')->required();
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Team;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,14 @@ class Verify2FA
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->routeIs('dashboard') && Auth::user()->privilege->privilege_grade == 4) {
+            return redirect()->route('database');
+        }
+        if (Team::count() == 0 && !$request->routeIs('fillDatabase') && Auth::user()->privilege->privilege_grade == 4) {
+            return redirect()->route('fillDatabase');
+        }elseif(Team::count() > 0 && $request->routeIs('fillDatabase') && Auth::user()->privilege->privilege_grade == 4){
+            return redirect()->route('database');
+        }
         if (Auth::user()->two_factor_confirmed_at == null && config('app.debug') == false) {
             return redirect()->route('two-factor-register');
         }

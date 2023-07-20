@@ -7,6 +7,7 @@ use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
 use Laravel\Jetstream\Team as JetstreamTeam;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Team extends JetstreamTeam
 {
@@ -19,6 +20,8 @@ class Team extends JetstreamTeam
      */
     protected $casts = [
         'personal_team' => 'boolean',
+        'startCycle' => 'datetime',
+        'endCycle' => 'datetime',
     ];
 
     /**
@@ -29,6 +32,9 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'startCycle',
+        'endCycle',
+        'shift',
     ];
 
     /**
@@ -41,4 +47,12 @@ class Team extends JetstreamTeam
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,
     ];
+
+    /**
+     * Get the course schedule.
+     */
+    public function schedule(): HasOne
+    {
+        return $this->hasOne(CourseSchedule::class);
+    }
 }

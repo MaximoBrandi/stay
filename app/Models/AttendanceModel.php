@@ -21,8 +21,8 @@ class AttendanceModel extends Model
         'created_at',
     ];
 
-    public function privilege(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'student_id');
+        return $this->belongsTo(User::class, 'student_id');
     }
 }

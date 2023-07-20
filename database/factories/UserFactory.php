@@ -27,6 +27,8 @@ class UserFactory extends Factory
         static $password;
 
         return [
+            'name' => 'Temporary',
+            'email' => 'Temporary'.Str::random(15).'@email.com',
             'email_verified_at' => now(),
             'password' => $password ?: $password = bcrypt('12341234'), // password
             'two_factor_secret' => null,

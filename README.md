@@ -83,7 +83,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://stay.com.ar)
+<div align="center">
+    [![Product Name Screen Shot][product-screenshot]](https://stay.com.ar)
+</div>
 
 Stay allows users to manage attendance and statistics using Laravel, a PHP framework. The application has the following features:
 
@@ -92,8 +94,6 @@ Stay allows users to manage attendance and statistics using Laravel, a PHP frame
 - It can export the data to different formats.
 - It can be customized to suit different needs and preferences, such as adding or removing fields, changing the layout, or setting permissions.
 - It is easy to install and use, with a user-friendly interface and clear documentation.
-
-: `MaximoBrandi`, `stay`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -156,12 +156,7 @@ _please refer to the [Documentation](https://stay.com.ar/docs)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/MaximoBrandi/stay/issues) for a full list of proposed features (and known issues).
+_please refer to the [Road Map](https://stay.com.ar/beta)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -208,7 +203,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [license-url]: https://github.com/MaximoBrandi/stay/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/máximo-prandi
-[product-screenshot]: https://i.ibb.co/RHgJMdv/Laravel-STAY-4.png
+[product-screenshot]: https://i.ibb.co/mS04Ndh/Laravel-STAY-5.png
 [Livewire.com]: https://img.shields.io/badge/livewire-7D4698?style=for-the-badge&logo=livewire&logoColor=white
 [Livewire-url]: https://laravel-livewire.com/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white

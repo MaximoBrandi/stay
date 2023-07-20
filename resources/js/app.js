@@ -7,3 +7,6 @@ window.Alpine = Alpine;
 Alpine.plugin(focus);
 
 Alpine.start();
+
+import { Select, Input, initTE, Collapse } from "tw-elements";
+initTE({ Select, Input, Collapse });

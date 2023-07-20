@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Holiday;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Privileges;
@@ -10,6 +11,7 @@ use App\Models\Team;
 use App\Models\retirement;
 use App\Models\AttendanceModel;
 use App\Models\Grade;
+use App\Models\CourseSchedule;
 use Carbon\Carbon;
 class DatabaseSeeder extends Seeder
 {
@@ -44,6 +46,28 @@ class DatabaseSeeder extends Seeder
             Carbon::create(2023, 12, 8, 0)		// 08/12/2023	Inmaculada Concepción de María
         );
 
+        $recesoInicio = Carbon::create(2023, 7, 17, 0);
+
+        $key = array_key_last($feriados);
+
+        while ($recesoInicio <= Carbon::create(2023, 7, 28, 0)) {
+            if ($recesoInicio->isWeekday() && !in_array($recesoInicio, $feriados)) {
+                $key++;
+
+                $feriados[$key] = clone $recesoInicio;
+            }
+
+            $recesoInicio->addDay();
+        }
+
+        foreach ($feriados as $key => $value) {
+            $holiday = new Holiday;
+            $holiday->date = $value;
+            $holiday->save();
+        }
+
+        $holidays = Holiday::pluck('date');
+
         $preceptors = User::factory(3)->create();
 
         $grade = null;
@@ -70,7 +94,20 @@ class DatabaseSeeder extends Seeder
                 'personal_team' => false,
                 'shift' => 'night',
                 'grade_id' => $grade->id,
+                'startCycle' => Carbon::create(2023, 2, 27, 0),
+                'endCycle' => Carbon::create(2023, 12, 22, 0),
             ]));
+
+            $schedule = new CourseSchedule;
+
+            $schedule->openTime = Carbon::createFromTime(17, 00, 0)->format('H:i:s');
+            $schedule->startTime = Carbon::createFromTime(18, 0, 0)->format('H:i:s');
+            $schedule->lateTime = Carbon::createFromTime(18, 30, 0)->format('H:i:s');
+            $schedule->absentTime = Carbon::createFromTime(18, 45, 0)->format('H:i:s');
+            $schedule->closeTime = Carbon::createFromTime(22, 50, 0)->format('H:i:s');
+            $schedule->team_id = $course_id;
+            $schedule->shift = "night";
+            $schedule->save();
 
             array_push($teams, $team);
 
@@ -122,7 +159,7 @@ class DatabaseSeeder extends Seeder
                 $hour = rand(19,22);
                 $minute = rand(10,50);
 
-                if ($contador->isWeekday() && !in_array($contador, $feriados)) {
+                if ($contador->isWeekday() && !in_array($contador, $holidays->toArray())) {
                     $retirement = new retirement;
                     $retirement->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $retirement->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
@@ -144,7 +181,7 @@ class DatabaseSeeder extends Seeder
                 $hour = 18;
                 $minute = rand(0,46);
 
-                if ($contador->isWeekday() && !in_array($contador, $feriados)) {
+                if ($contador->isWeekday() && !in_array($contador, $holidays->toArray())) {
                     $attendance = new AttendanceModel;
                     $attendance->created_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
                     $attendance->updated_at = Carbon::create($contador->year, $contador->month, $contador->day, $hour, $minute, 0);
@@ -166,5 +203,6 @@ class DatabaseSeeder extends Seeder
             $privilege->privilege_grade = 1;
             $privilege->save();
         }
+
     }
 }

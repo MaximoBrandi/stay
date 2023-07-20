@@ -10,19 +10,20 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceQr extends Component
 {
-    public $qrlink;
+    public string $qrlink;
 
-    public $lasttoken;
+    private $lasttoken; //TokenModel
 
-    public $alreadylogedin;
-    public $classes;
+    public bool $alreadylogedin;
+
+    public int $classes;
 
     private function saveToken(){
         $this->alreadylogedin = false;
 
         $this->create();
 
-        if ($this->lasttoken) {
+        if (isset($this->lasttoken)) {
             $this->lasttoken->delete();
         }
     }
@@ -73,7 +74,7 @@ class AttendanceQr extends Component
     public function render()
     {
         if(Auth::user()->privilege->privilege_grade == 1){
-            $dateController = new DateController(Auth::user()->current_team_id);
+            $dateController = new DateController(Auth::user()->currentTeam);
 
             if ($dateController->estadoDelDia(Auth::user()->id) == 4 && $dateController->horaDeClases() && $dateController->diaDeClases()) {
                 $this->classes = 1;

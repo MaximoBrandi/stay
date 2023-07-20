@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'America/Argentina/Buenos_Aires',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -186,7 +186,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'Helpers' => App\Helpers\Helpers::class
     ])->toArray(),
 
 ];

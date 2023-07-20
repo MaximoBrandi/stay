@@ -10,12 +10,12 @@ use App\Http\Controllers\DateController;
 
 class RetirementQr extends Component
 {
-    public $qrlink;
+    public string $qrlink;
 
-    public $lasttoken;
+    public $lasttoken; //TokenModel
 
-    public $alreadylogedin;
-    public $attendance;
+    public bool $alreadylogedin;
+    public bool $attendance;
 
     /**
      * Almacenar una nueva asistencia en la base de datos.
@@ -71,7 +71,7 @@ class RetirementQr extends Component
     public function render()
     {
         if(Auth::user()->privilege->privilege_grade == 1){
-            $dateController = new DateController(Auth::user()->current_team_id);
+            $dateController = new DateController(Auth::user()->currentTeam);
 
             if ($dateController->estadoDelDia(Auth::user()->id) !== 4 ) {
                 $this->attendance = true;

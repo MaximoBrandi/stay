@@ -18,7 +18,10 @@ class CourseStudents extends LivewireDatatable
 
     public function builder()
     {
-        return User::query()->where('current_team_id', '=', Auth::user()->currentTeam->id)->where('id', '>', 6);
+        return User::query()->whereHas('privilege', function ($query) {
+            return $query->where('privilege_grade', '=', 1);
+        })->where('current_team_id', '=', Auth::user()->current_team_id);
+
     }
 
     public function columns()

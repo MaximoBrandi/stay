@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\retirement;
+use App\Models\Team;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
@@ -16,7 +17,7 @@ class RetirementStatus extends LivewireDatatable
     public $model = User::class;
 
     public $exportable = true;
-    public $course;
+    public Team $course;
 
     public function builder()
     {

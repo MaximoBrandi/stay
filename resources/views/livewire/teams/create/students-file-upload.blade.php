@@ -374,9 +374,4 @@
             </x-slot>
         </x-form-section>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
-
-    <script>
-        import "tw-elements";
-    </script>
 </div>

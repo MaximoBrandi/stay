@@ -11,6 +11,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -64,4 +65,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Privileges::class);
     }
+
+    /**
+     * Get the user's orders.
+     */
+    public function retirements(): HasMany
+    {
+        return $this->hasMany(retirement::class);
+    }
+
+    /**
+     * Get the user's orders.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(AttendanceModel::class);
+    }
+
 }

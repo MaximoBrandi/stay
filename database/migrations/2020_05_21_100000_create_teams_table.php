@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('shift')->default('night');
             $table->boolean('personal_team');
+            $table->date('startCycle')->nullable();
+            $table->date('endCycle')->nullable();
             $table->timestamps();
         });
     }

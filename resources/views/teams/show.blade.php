@@ -1,8 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Course Settings') }}
-        </h2>
+        <div class="shrink-0 flex items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Course Settings') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div>
@@ -23,5 +25,9 @@
                 </div>
             @endif
         </div>
+
+        <script>
+            Livewire.on('savedUpload', window.location.reload())
+        </script>
     </div>
 </x-app-layout>
